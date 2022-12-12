@@ -8,7 +8,8 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserModelAssembler extends RepresentationModelAssemblerSupport<ResponseUserDto, UserModel> {
+public class UserModelAssembler
+        extends RepresentationModelAssemblerSupport<ResponseUserDto, UserModel> {
 
     public UserModelAssembler() {
         super(UserController.class, UserModel.class);

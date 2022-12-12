@@ -8,7 +8,8 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.stereotype.Component;
 
 @Component
-public class AccountModelAssembler extends RepresentationModelAssemblerSupport<AccountDto, AccountModel> {
+public class AccountModelAssembler
+        extends RepresentationModelAssemblerSupport<AccountDto, AccountModel> {
 
     public AccountModelAssembler() {
         super(AccountController.class, AccountModel.class);

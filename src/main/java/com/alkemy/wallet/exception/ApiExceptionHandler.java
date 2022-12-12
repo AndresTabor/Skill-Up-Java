@@ -92,7 +92,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({FixedTermException.class, NotEnoughCashException.class})
-    public ResponseEntity<Object> handleCreateUserException(Exception exception) {
+    public ResponseEntity<Object> handleBadRequest(Exception exception) {
         ApiException apiException = ApiException.builder()
                 .status(HttpStatus.BAD_REQUEST)
                 .message(exception.getMessage())
@@ -111,6 +111,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .errors(List.of(ExceptionUtils.getRootCauseMessage(exception)))
                 .build();
         return new ResponseEntity<>(apiException, HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler({ResourceFoundException.class})
+    @ResponseBody
+    public ResponseEntity<Object> handleResourcesFound(Exception exception) {
+        ApiException apiException = ApiException.builder()
+                .status(HttpStatus.CONFLICT)
+                .message(exception.getMessage())
+                .errors(List.of(ExceptionUtils.getRootCauseMessage(exception)))
+                .build();
+        return new ResponseEntity<>(apiException, HttpStatus.CONFLICT);
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

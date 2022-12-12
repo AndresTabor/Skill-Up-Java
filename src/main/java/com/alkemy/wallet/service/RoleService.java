@@ -7,19 +7,25 @@ import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.service.interfaces.IRoleService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
 public class RoleService implements IRoleService {
 
-    @Autowired
-    private IRoleRepository roleRepository;
+    private final IRoleRepository roleRepository;
+    private final Mapper mapper;
+    private final MessageSource messageSource;
 
-    @Autowired
-    private Mapper mapper;
+    public RoleService(IRoleRepository roleRepository, Mapper mapper, MessageSource messageSource) {
+        this.roleRepository = roleRepository;
+        this.mapper = mapper;
+        this.messageSource = messageSource;
+    }
+
 
     @Override
     public RoleDto findByName(RoleName roleName) {
@@ -27,7 +33,8 @@ public class RoleService implements IRoleService {
         if (user.isPresent()) {
             return mapper.getMapper().map(user, RoleDto.class);
         }
-        throw new ResourceNotFoundException("Role name not found");
+        throw new ResourceNotFoundException(messageSource.getMessage("rolename.notfound.exception",
+                new Object[]{roleName}, Locale.ENGLISH));
     }
 
     @Override

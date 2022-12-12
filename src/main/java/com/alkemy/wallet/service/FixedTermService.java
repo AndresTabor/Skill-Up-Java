@@ -60,7 +60,7 @@ public class FixedTermService implements IFixedTermService {
         long days = ChronoUnit.DAYS.between(fixedTerm.getCreationDate(), fixedTerm.getClosingDate());
 
         if (days < MIN_DAYS) {
-            throw new FixedTermException(messageSource.getMessage("fixed-term.exception",
+            throw new FixedTermException(messageSource.getMessage("fixedterm.exception",
                     new Object[]{MIN_DAYS}, Locale.ENGLISH));
         }
 
@@ -74,14 +74,13 @@ public class FixedTermService implements IFixedTermService {
 
     }
 
-
     @Override
     public SimulatedFixedTermDto simulateFixedTerm(SimulatedFixedTermDto fixedTermDto) {
         long days = ChronoUnit.DAYS.between(fixedTermDto.getCreationDate(),
                 fixedTermDto.getClosingDate());
 
         if (days < MIN_DAYS) {
-            throw new FixedTermException(messageSource.getMessage("fixed-term.exception",
+            throw new FixedTermException(messageSource.getMessage("fixedterm.exception",
                     new Object[]{MIN_DAYS}, Locale.ENGLISH));
         }
 

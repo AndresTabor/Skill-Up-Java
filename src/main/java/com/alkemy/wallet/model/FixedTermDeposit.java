@@ -1,7 +1,6 @@
 package com.alkemy.wallet.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -14,9 +13,9 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "fixed_deposits")
-@ApiModel("Plazos fijos")
 @AllArgsConstructor
 @RequiredArgsConstructor
+//@ApiModel("Plazos fijos")
 public class FixedTermDeposit {
 
     @Id

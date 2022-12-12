@@ -1,6 +1,5 @@
 package com.alkemy.wallet.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

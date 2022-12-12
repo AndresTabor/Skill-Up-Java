@@ -129,12 +129,12 @@ public class AccountService implements IAccountService {
         try {
             User user = userService.findLoggedUser(token);
             Account account = accountRepository.findById(id).orElseThrow(()
-                    -> new ResourceNotFoundException(messageSource.getMessage("account-not-found.exception",
+                    -> new ResourceNotFoundException(messageSource.getMessage("account.notfound.exception",
                     new Object[] {id}, Locale.ENGLISH)));
             List<Account> accounts = accountRepository.findAllByUser_Email(user.getEmail());
 
             if (accounts.stream().noneMatch(c -> c.getId().equals(id))) {
-                throw new ResourceNotFoundException(messageSource.getMessage("account-not-found-for-user.exception",
+                throw new ResourceNotFoundException(messageSource.getMessage("account.notfound.foruser.exception",
                         new Object[] {id}, Locale.ENGLISH));
             }
 
@@ -201,10 +201,10 @@ public class AccountService implements IAccountService {
         }
         Optional<Account> foundAccount = accountRepository.findById(id);
         if (!foundAccount.isPresent()) {
-            throw new ResourceFoundException(messageSource.getMessage("account-not-found.exception", new Object[] {id}, Locale.ENGLISH));
+            throw new ResourceFoundException(messageSource.getMessage("account.notfound.exception", new Object[] {id}, Locale.ENGLISH));
         }
         if (foundAccount.get().getBalance() < amount) {
-            throw new NotEnoughCashException(messageSource.getMessage("not-enough-cash.exception", null, Locale.ENGLISH));
+            throw new NotEnoughCashException(messageSource.getMessage("notenoughcash.exception", null, Locale.ENGLISH));
         }
         Account account = foundAccount.get();
         account.setBalance(account.getBalance() - amount);

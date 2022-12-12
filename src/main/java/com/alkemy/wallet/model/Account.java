@@ -1,7 +1,6 @@
 package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.model.enums.Currency;
-import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,7 +15,7 @@ import java.util.Date;
 @RequiredArgsConstructor
 @Entity
 @Table(name = "accounts")
-@ApiModel("Cuenta")
+//@ApiModel("Cuenta")
 public class Account {
 
     @Id
@@ -58,7 +57,7 @@ public class Account {
 
     public Account(Currency currency) {
         this.balance = 0.;
-        if (currency == Currency.ars) {
+        if (currency == Currency.ARS) {
             this.transactionLimit = 300000.0;
         } else {
             this.transactionLimit = 1000.;

@@ -1,7 +1,6 @@
 package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.AccountUpdateDto;
-import com.alkemy.wallet.exception.FixedTermException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.UserNotLoggedException;
 import com.alkemy.wallet.listing.RoleName;
@@ -96,7 +95,7 @@ class AccountControllerTest {
                 .transactionLimit(300000D)
                 .creationDate(new Date())
                 .user(user)
-                .currency(Currency.ars)
+                .currency(Currency.ARS)
                 .build();
 
         accountUsd = Account.builder()
@@ -105,7 +104,7 @@ class AccountControllerTest {
                 .transactionLimit(1000D)
                 .creationDate(new Date())
                 .user(user)
-                .currency(Currency.usd)
+                .currency(Currency.USD)
                 .build();
 
         fixedTermArs = FixedTermDeposit.builder()
@@ -205,7 +204,7 @@ class AccountControllerTest {
                 .transactionLimit(400000D)
                 .creationDate(new Date())
                 .user(user)
-                .currency(Currency.ars)
+                .currency(Currency.ARS)
                 .build();
         AccountUpdateDto newTransactionLimit = new AccountUpdateDto(400000D);
 

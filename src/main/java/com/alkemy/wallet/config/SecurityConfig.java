@@ -19,17 +19,21 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-
     @Bean
     public SecurityFilterChain basicFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf().disable()
                 .authorizeRequests(auth -> {
-                    auth.anyRequest().permitAll();
+                    auth
+                            .antMatchers("/api/**", "/swagger-ui/**", "/javainuse-openapi/**",
+                                    "/auth/**", "/fixedTermDeposit/simulate").permitAll()
+                            .anyRequest().authenticated();
 
                 })
                 //.addFilterBefore(jwtAuthenticationFilter(),
                 // UsernamePasswordAuthenticationFilter.class)
+                .httpBasic()
+                .and()
                 .build();
     }
 

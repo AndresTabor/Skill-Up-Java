@@ -40,7 +40,7 @@ class AccountServiceTest {
         //Arrange
         Account accountMock = new Account();
         accountMock.setId(1l);
-        accountMock.setCurrency(Currency.usd);
+        accountMock.setCurrency(Currency.USD);
         accountMock.setTransactionLimit(10.0);
         accountMock.setBalance(100.00);
         accountMock.setId(10l);

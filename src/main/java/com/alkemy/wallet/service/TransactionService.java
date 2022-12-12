@@ -18,6 +18,7 @@ import com.alkemy.wallet.service.interfaces.ITransactionService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,10 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
+
+import static org.hibernate.internal.CoreLogging.logger;
 
 @Service
 public class TransactionService implements ITransactionService {
@@ -46,7 +50,6 @@ public class TransactionService implements ITransactionService {
     @Autowired
     IUserRepository userRepository;
 
-
     @Autowired
     IAccountService accountService;
 
@@ -56,6 +59,8 @@ public class TransactionService implements ITransactionService {
     @Autowired
     JwtUtil jwtUtil;
 
+    @Autowired
+    MessageSource messageSource;
 
     @Override
     public HashSet<TransactionDto> getByUserId(@Valid List<Account> accounts) {
@@ -72,26 +77,37 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public TransactionDto createTransactions(Transaction transactionIncome, Transaction transactionPayment) {
+    public TransactionDto createTransactions(Transaction transactionIncome,
+                                             Transaction transactionPayment) {
         transactionRepository.save(transactionIncome);
-        return mapper.getMapper().map(transactionRepository.save(transactionPayment), TransactionDto.class);
+        return mapper.getMapper().map(transactionRepository
+                .save(transactionPayment), TransactionDto.class);
     }
 
     @Override
-    public ResponseEntity<Object> makeTransaction(String token, TransactionDto destinedTransactionDto) {
+    public ResponseEntity<Object> makeTransaction(String token,
+                                                  TransactionDto destinedTransactionDto) {
         try {
             userService.checkLoggedUser(token);
             User senderUser = userRepository.findByEmail(jwtUtil.getValue(token));
-            Account senderAccount = accountService.getAccountByCurrency(senderUser.getId(), destinedTransactionDto.getAccount().getCurrency());
-            Account destinedAccount = accountRepository.findById(destinedTransactionDto.getAccount().getId()).orElseThrow(() -> new ResourceNotFoundException("The receiving account does not exist"));
+            Account senderAccount = accountService.getAccountByCurrency(senderUser.getId(),
+                    destinedTransactionDto.getAccount().getCurrency());
+            Account destinedAccount = accountRepository.findById(destinedTransactionDto.getAccount()
+                    .getId()).orElseThrow(() -> new ResourceNotFoundException(messageSource
+                    .getMessage("account.notfound.exception",
+                            new Object[]{destinedTransactionDto.getAccount().getId()}, Locale.ENGLISH)));
             accountService.checkAccountLimit(senderAccount, destinedTransactionDto);
             checkBalance(senderAccount.getBalance(), destinedTransactionDto.getAmount());
-            TransactionDto transactionPayment = createTransactions(new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.income, destinedTransactionDto.getDescription(), destinedAccount),
-                    new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.payment, destinedTransactionDto.getDescription(), mapper.getMapper().map(senderAccount, Account.class)));
-
-            return ResponseEntity.status(HttpStatus.OK).body(mapper.getMapper().map(transactionPayment, TransactionDto.class));
+            TransactionDto transactionPayment = createTransactions(
+                    new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.income,
+                            destinedTransactionDto.getDescription(), destinedAccount),
+                    new Transaction(destinedTransactionDto.getAmount(), TypeOfTransaction.payment,
+                            destinedTransactionDto.getDescription(),
+                            mapper.getMapper().map(senderAccount, Account.class)));
+            return ResponseEntity.status(HttpStatus.OK).body(mapper
+                    .getMapper().map(transactionPayment, TransactionDto.class));
         } catch (ResourceNotFoundException | UserNotLoggedException | AccountLimitException |
-                 NotEnoughCashException e) {
+                NotEnoughCashException e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e);
         }
@@ -101,13 +117,11 @@ public class TransactionService implements ITransactionService {
     public Page<TransactionDto> findAllTransactionsByUserIdPageable(Long id, int page, String token) {
 
         UserDto user = userService.findByEmail(jwtUtil.getValue(token));
-
         Pageable pageable = PageRequest.of(page, 10);
 
-        Page<TransactionDto> pageTransactions = transactionRepository.findByAccount_User_Id(id, pageable).map((transaction) ->
+        return transactionRepository
+                .findByAccount_User_Id(user.getId(), pageable).map((transaction) ->
                         mapper.getMapper().map(transaction, TransactionDto.class));
-
-        return pageTransactions;
 
     }
 
@@ -127,13 +141,17 @@ public class TransactionService implements ITransactionService {
     public ResponseEntity<?> patchTransaction(Long id, String token, String description) {
         try {
             userService.checkLoggedUser(token);
-            Transaction transaction = transactionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Transaction doesn't exist"));
+            Transaction transaction = transactionRepository.findById(id).orElseThrow(() ->
+                    new ResourceNotFoundException(messageSource.getMessage(
+                            "transaction.notfound.exception",
+                            new Object[]{id},
+                            Locale.ENGLISH)));
             transaction.setDescription(description);
             return ResponseEntity.status(HttpStatus.OK)
                     .body(mapper.getMapper()
                             .map(transactionRepository.save(transaction), TransactionDto.class));
         } catch (UserNotLoggedException e) {
-            System.out.println(e.getMessage());
+            logger(e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
     }
@@ -141,25 +159,35 @@ public class TransactionService implements ITransactionService {
     @Override
     public boolean checkBalance(Double balance, Double amount) {
         if (balance < amount) {
-            throw new NotEnoughCashException("Not enough cash");
-        } else {
-            return true;
+            throw new NotEnoughCashException(messageSource
+                    .getMessage("notenoughcash.exception", null, Locale.ENGLISH));
         }
+        return true;
     }
 
     @Override
     public boolean checkTransactionAmount(Double amount) {
         if (amount < 0) {
-            throw new NoAmountException("Cannot make a transaction without amount");
+            throw new NoAmountException(messageSource
+                    .getMessage("amount.exception", null, Locale.ENGLISH));
         } else return true;
     }
 
     @Override
     public ResponseEntity<?> createPayment(TransactionDto transactionDto) {
         try {
-            Account account = accountRepository.findById(transactionDto.getAccount().getId()).orElseThrow(() -> new ResourceNotFoundException("Account not found"));
-            Transaction transaction = transactionRepository.save(new Transaction(transactionDto.getAmount(), TypeOfTransaction.payment, transactionDto.getDescription(), account));
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(mapper.getMapper().map(transaction, TransactionDto.class));
+            Account account = accountRepository.findById(transactionDto.getAccount().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            messageSource.getMessage("account.notfound.exception",
+                                    new Object[]{transactionDto.getAccount().getId()},
+                                    Locale.ENGLISH)));
+            Transaction transaction = transactionRepository.save(new Transaction(
+                    transactionDto.getAmount(),
+                    TypeOfTransaction.payment,
+                    transactionDto.getDescription(),
+                    account));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(mapper.getMapper()
+                    .map(transaction, TransactionDto.class));
         } catch (NoAmountException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }
@@ -168,9 +196,19 @@ public class TransactionService implements ITransactionService {
     @Override
     public ResponseEntity<?> createDeposit(TransactionDto transactionDto) {
         try {
-            Account account = accountRepository.findById(transactionDto.getAccount().getId()).orElseThrow(() -> new ResourceNotFoundException("Account not found"));
-            Transaction transaction = transactionRepository.save(new Transaction(transactionDto.getAmount(), TypeOfTransaction.deposit, transactionDto.getDescription(), account));
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body(mapper.getMapper().map(transaction, TransactionDto.class));
+            Account account = accountRepository.findById(transactionDto.getAccount().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            messageSource.getMessage(
+                                    "account.notfound.exception",
+                                    new Object[]{transactionDto.getAccount().getId()},
+                                    Locale.ENGLISH)));
+            Transaction transaction = transactionRepository.save(new Transaction(
+                    transactionDto.getAmount(),
+                    TypeOfTransaction.deposit,
+                    transactionDto.getDescription(),
+                    account));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(mapper.getMapper()
+                    .map(transaction, TransactionDto.class));
         } catch (NoAmountException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
         }

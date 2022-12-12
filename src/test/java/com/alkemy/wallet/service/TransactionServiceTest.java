@@ -15,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import java.util.Date;
 
@@ -51,11 +50,11 @@ class TransactionServiceTest {
         MockitoAnnotations.initMocks(this);
 
         accountArsDto = new AccountDto();
-        accountArsDto.setCurrency(Currency.usd);
+        accountArsDto.setCurrency(Currency.USD);
         accountArsDto.setUserId(1L);
 
         accountUsdDto = new AccountDto();
-        accountUsdDto.setCurrency(Currency.ars);
+        accountUsdDto.setCurrency(Currency.ARS);
         accountUsdDto.setUserId(2L);
         accountUsdDto.setId(2L);
 

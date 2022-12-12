@@ -11,15 +11,10 @@ public class TransactionDto {
 
     private Double amount;
 
-//    private TypeOfTransaction type;
-
     private Date transactionDate;
 
     private String description;
 
     private AccountDto account;
-
-//    private BasicAccountDto account;
-
 
 }

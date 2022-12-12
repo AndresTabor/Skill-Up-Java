@@ -12,12 +12,10 @@ import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IFixedTermRepository;
 import com.alkemy.wallet.repository.IUserRepository;
-import com.alkemy.wallet.service.CustomUserDetailsService;
 import com.alkemy.wallet.util.DataLoaderUser;
 import com.alkemy.wallet.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,7 +23,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -99,7 +96,7 @@ class FixedTermDepositControllerTest {
                 .transactionLimit(300000D)
                 .creationDate(new Date())
                 .user(user)
-                .currency(Currency.ars)
+                .currency(Currency.ARS)
                 .build();
 
         token = jwtUtil.create(user.getEmail());
@@ -113,7 +110,7 @@ class FixedTermDepositControllerTest {
                 .amount(2000D)
                 .creationDate(LocalDate.now())
                 .closingDate(LocalDate.now().plusDays(35))
-                .currency(Currency.ars)
+                .currency(Currency.ARS)
                 .build();
 
         FixedTermDeposit fixedTermDeposit = FixedTermDeposit.builder()
@@ -158,7 +155,7 @@ class FixedTermDepositControllerTest {
                 .amount(2000D)
                 .creationDate(LocalDate.now())
                 .closingDate(LocalDate.now().plusDays(25))
-                .currency(Currency.ars)
+                .currency(Currency.ARS)
                 .build();
 
         when(userRepository.findByEmail(anyString())).thenReturn(user);
@@ -185,7 +182,7 @@ class FixedTermDepositControllerTest {
                 .amount(200000D)
                 .creationDate(LocalDate.now())
                 .closingDate(LocalDate.now().plusDays(60))
-                .currency(Currency.ars)
+                .currency(Currency.ARS)
                 .build();
 
         when(userRepository.findByEmail(anyString())).thenReturn(user);
@@ -210,7 +207,7 @@ class FixedTermDepositControllerTest {
                 .amount(2000D)
                 .creationDate(LocalDate.now())
                 .closingDate(LocalDate.now().plusDays(30))
-                .currency(Currency.ars)
+                .currency(Currency.ARS)
                 .build();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/fixedTermDeposit/simulate")
@@ -234,7 +231,7 @@ class FixedTermDepositControllerTest {
                 .amount(2000D)
                 .creationDate(LocalDate.now())
                 .closingDate(LocalDate.now().plusDays(25))
-                .currency(Currency.ars)
+                .currency(Currency.ARS)
                 .build();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/fixedTermDeposit/simulate")
