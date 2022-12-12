@@ -2,6 +2,7 @@ package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.listing.RoleName;
 import com.sun.istack.NotNull;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;

@@ -12,11 +12,13 @@ import com.alkemy.wallet.repository.IFixedTermRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IFixedTermService;
 import com.alkemy.wallet.service.interfaces.IUserService;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+@Hidden
 @Service
 public class FixedTermService implements IFixedTermService {
 

@@ -3,6 +3,7 @@ package com.alkemy.wallet.service.interfaces;
 import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.enums.Currency;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Hidden
 public interface IAccountService {
 
     BasicAccountDto createAccount(Account account);

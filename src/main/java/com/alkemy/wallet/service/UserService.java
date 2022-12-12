@@ -10,10 +10,12 @@ import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Hidden
 @Service
 public class UserService implements IUserService {
 
