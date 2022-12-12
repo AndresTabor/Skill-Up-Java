@@ -111,14 +111,14 @@ class TransactionSendUsdTest {
                 .id(1L)
                 .balance(3000.)
                 .user(userTest)
-                .currency(Currency.usd)
+                .currency(Currency.USD)
                 .transactionLimit(3000.).build();
 
         receivingAccountTest = Account.builder()
                 .id(2L)
                 .balance(3000.)
                 .user(userTest2)
-                .currency(Currency.usd)
+                .currency(Currency.USD)
                 .transactionLimit(3000.).build();
 
         accountsTest = new ArrayList<>();
@@ -137,7 +137,7 @@ class TransactionSendUsdTest {
         when(transactionRepository.save(any(Transaction.class))).thenReturn(transaction);
         when(userRepository.findByEmail(jwtUtil.getValue(token))).thenReturn(userTest);
         when(accountRespository.findAllByUser_Id(anyLong())).thenReturn(accountsTest);
-        when(accountService.getAccountByCurrency(userTest.getId(), Currency.usd)).thenReturn(senderAccountTest);
+        when(accountService.getAccountByCurrency(userTest.getId(), Currency.USD)).thenReturn(senderAccountTest);
     }
 
     @Test

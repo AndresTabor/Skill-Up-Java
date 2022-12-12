@@ -1,7 +1,5 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.dto.UserDto;
-import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.UserNotLoggedException;
 import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.model.User;
@@ -12,7 +10,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
-import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
@@ -46,26 +43,14 @@ public class UserService implements IUserService {
     @Override
     public User findLoggedUser(String token) {
         User user = userRepository.findByEmail(jwtUtil.getValue(token));
-        if (user != null) {
-            return user;
+        if (user == null) {
+            throw new UserNotLoggedException(messageSource.getMessage(
+                    "user.notlogged.exception",
+                    null,
+                    Locale.ENGLISH));
         }
-        throw new UserNotLoggedException(messageSource.getMessage(
-                "user.notlogged.exception",
-                null,
-                Locale.ENGLISH));
+        return user;
     }
 
-    @Override
-    public UserDto findByEmail(String email) throws ResourceNotFoundException {
-        Optional<User> user = userRepository.findOptionalByEmail(email);
-        if (user.isPresent()) {
-            return mapper.getMapper().map(user.get(), UserDto.class);
-        }
-        throw new ResourceNotFoundException(
-                messageSource.getMessage(
-                        "email.notfound.exception",
-                        new Object[]{email},
-                        Locale.ENGLISH));
-    }
 
 }

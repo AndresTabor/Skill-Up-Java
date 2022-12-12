@@ -18,8 +18,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-<<<<<<< HEAD
-=======
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,12 +27,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
->>>>>>> f10f99458c7f02cd560c0f69751e01d01db017d1
 
 import java.util.Date;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -79,16 +75,6 @@ class TransactionServiceTest {
     void setUp() {
         MockitoAnnotations.initMocks(this);
 
-<<<<<<< HEAD
-        accountArsDto = new AccountDto();
-        accountArsDto.setCurrency(Currency.USD);
-        accountArsDto.setUserId(1L);
-
-        accountUsdDto = new AccountDto();
-        accountUsdDto.setCurrency(Currency.ARS);
-        accountUsdDto.setUserId(2L);
-        accountUsdDto.setId(2L);
-=======
 
         userTest = User.builder()
                 .id(1L)
@@ -101,10 +87,8 @@ class TransactionServiceTest {
                 .id(1L)
                 .balance(0.)
                 .user(userTest)
-                .currency(Currency.ars)
+                .currency(Currency.ARS)
                 .transactionLimit(3000.).build();
-
->>>>>>> f10f99458c7f02cd560c0f69751e01d01db017d1
 
         transactionDeposit = new TransactionDto();
         transactionDeposit.setDescription("Descripcion de prueba");

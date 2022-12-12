@@ -123,7 +123,7 @@ public class TransactionService implements ITransactionService {
     @Override
     public Page<TransactionDto> findAllTransactionsByUserIdPageable(Long id, int page, String token) {
 
-        UserDto user = userService.findByEmail(jwtUtil.getValue(token));
+        User user = userService.findLoggedUser(token);
         Pageable pageable = PageRequest.of(page, 10);
         return transactionRepository
                 .findByAccount_User_Id(user.getId(), pageable).map((transaction) ->

@@ -137,5 +137,15 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(apiException, HttpStatus.UNAUTHORIZED);
     }
 
-
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler({AccountAlreadyExistsException.class})
+    @ResponseBody
+    public ResponseEntity<Object> handleAccountAlreadyExits(Exception exception) {
+        ApiException apiException = ApiException.builder()
+                .status(HttpStatus.FORBIDDEN)
+                .message(exception.getMessage())
+                .errors(List.of(ExceptionUtils.getRootCauseMessage(exception)))
+                .build();
+        return new ResponseEntity<>(apiException, HttpStatus.FORBIDDEN);
+    }
 }

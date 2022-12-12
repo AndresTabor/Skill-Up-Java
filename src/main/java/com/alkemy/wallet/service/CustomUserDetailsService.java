@@ -1,5 +1,6 @@
 package com.alkemy.wallet.service;
 
+import com.alkemy.wallet.dto.AccountCreateDto;
 import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
@@ -65,8 +66,8 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 
         String token = this.authenticated(requestUserDto);
 
-        accountService.createAccount(new Account(Currency.ARS));
-        accountService.createAccount(new Account(Currency.USD));
+        accountService.createAccount(new AccountCreateDto(Currency.ARS), token);
+        accountService.createAccount(new AccountCreateDto(Currency.USD), token);
 
         ResponseUserDto responseUserDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
         responseUserDto.setToken(token);
@@ -91,8 +92,8 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 
         String token = this.authenticated(requestUserDto);
 
-        accountService.createAccount(new Account(Currency.ARS));
-        accountService.createAccount(new Account(Currency.USD));
+        accountService.createAccount(new AccountCreateDto(Currency.ARS), token);
+        accountService.createAccount(new AccountCreateDto(Currency.USD), token);
 
         ResponseUserDto responseUserDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
         responseUserDto.setToken(token);
@@ -166,7 +167,7 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 
             return userPage;
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
             throw new Exception(e.getMessage());
 

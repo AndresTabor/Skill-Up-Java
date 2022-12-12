@@ -14,14 +14,14 @@ import javax.validation.constraints.NotEmpty;
 @AllArgsConstructor
 public class ResponseUserDto {
 
-    @NotEmpty
+    @NotEmpty(message = "{firstname.notnull}")
     private String firstName;
 
-    @NotEmpty
+    @NotEmpty(message = "{lastname.notnull}")
     private String lastName;
 
     @NotEmpty
-    @Email(message = "the email must be real email")
+    @Email(message = "{email.notnull}")
     private String email;
 
     private String token;

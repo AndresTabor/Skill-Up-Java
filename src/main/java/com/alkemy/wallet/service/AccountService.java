@@ -19,7 +19,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,19 +48,23 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public BasicAccountDto createAccount(Account account) {
+    public BasicAccountDto createAccount(AccountCreateDto accountCreateDto, String token) {
 
-        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userService.findLoggedUser(token);
 
-        User user = mapper.map(userService.findByEmail(email), User.class);
         if (user != null) {
-            List<Account> accounts = accountRepository.findAllByUser_Email(email);
+            List<Account> accounts = accountRepository.findAllByUser_Email(user.getEmail());
 
             if (accounts.stream()
-                    .anyMatch(c -> c.getCurrency().equals(account.getCurrency()))) {
-                throw new ResourceFoundException("Account with " + account.getCurrency() + " is already created");
+                    .anyMatch(c -> c.getCurrency().equals(accountCreateDto.getCurrency()))) {
+                throw new AccountAlreadyExistsException(messageSource.getMessage(
+                        "account.found.foruser.exception",
+                        new Object[] {accountCreateDto.getCurrency()},
+                        Locale.ENGLISH));
             }
         }
+
+        Account account = mapper.map(accountCreateDto, Account.class);
 
         account.setUser(user);
         account.setCreationDate(new Date());
@@ -87,10 +90,8 @@ public class AccountService implements IAccountService {
 
         Pageable pageable = PageRequest.of(page, 10);
 
-        Page<AccountDto> pageAccounts = accountRepository.findAll(pageable).map((account) ->
+        return accountRepository.findAll(pageable).map(account ->
                 mapper.map(account, AccountDto.class));
-
-        return pageAccounts;
     }
 
     @Override
@@ -164,7 +165,7 @@ public class AccountService implements IAccountService {
             userService.checkLoggedUser(token);
 //            UserDto loggedUser = userService.findByEmail(jwtUtil.getValue(token));
 //            checkAccountExistence(loggedUser.getId(), basicAccountDto.getCurrency());
-            return ResponseEntity.status(HttpStatus.OK).body(createAccount(mapper.map(basicAccountDto, Account.class)));
+            return ResponseEntity.status(HttpStatus.OK).body(createAccount(mapper.map(basicAccountDto, AccountCreateDto.class), token));
 
         } catch (UserNotLoggedException | AccountAlreadyExistsException e) {
             System.out.println(e.getMessage());

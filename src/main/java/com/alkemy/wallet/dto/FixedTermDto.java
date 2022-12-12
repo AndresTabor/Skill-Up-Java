@@ -33,6 +33,7 @@ public class FixedTermDto {
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate closingDate;
 
+    @NotNull(message = "{currency.notnull}")
     private Currency currency;
 
 }

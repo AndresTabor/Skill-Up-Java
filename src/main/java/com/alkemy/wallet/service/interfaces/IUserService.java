@@ -1,6 +1,5 @@
 package com.alkemy.wallet.service.interfaces;
 
-import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.model.User;
 
 public interface IUserService {
@@ -9,5 +8,4 @@ public interface IUserService {
 
     User findLoggedUser(String token);
 
-    UserDto findByEmail(String email );
 }
