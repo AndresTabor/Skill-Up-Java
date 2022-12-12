@@ -7,27 +7,30 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.util.Date;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class FixedTermDto {
 
     private Long id;
 
+    @NotNull(message = "{amount.notnull}")
     private Double amount;
 
     private Long accountId;
 
     private Double interest;
 
-    @JsonFormat(pattern="dd-MM-yyyy")
+    @NotNull(message = "{creationdate.notnull}")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate creationDate;
 
-    @JsonFormat(pattern="dd-MM-yyyy")
+    @NotNull(message = "{closingdate.notnull}")
+    @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate closingDate;
 
     private Currency currency;

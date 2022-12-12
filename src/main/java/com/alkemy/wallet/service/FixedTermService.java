@@ -12,34 +12,37 @@ import com.alkemy.wallet.repository.IFixedTermRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IFixedTermService;
 import com.alkemy.wallet.service.interfaces.IUserService;
-import org.springframework.stereotype.Service;
+import org.springframework.context.MessageSource;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Locale;
+
+import org.springframework.stereotype.Service;
 
 @Service
 public class FixedTermService implements IFixedTermService {
 
-    private final Mapper mapper;
-
-    private final IUserService userService;
-
-    private final IFixedTermRepository fixedTermRepository;
-
-    private final IAccountService accountService;
-
-    private final IAccountRepository accountRepository;
-
     private static final Integer MIN_DAYS = 30;
-
     private static final Double DAILY_INTEREST = 0.005;
+    private final Mapper mapper;
+    private final IUserService userService;
+    private final IFixedTermRepository fixedTermRepository;
+    private final IAccountService accountService;
+    private final IAccountRepository accountRepository;
+    private final MessageSource messageSource;
 
-    public FixedTermService(Mapper mapper, IUserService userService, IFixedTermRepository fixedTermRepository, IAccountService accountService, IAccountRepository accountRepository) {
+    public FixedTermService(Mapper mapper, IUserService userService,
+                            IFixedTermRepository fixedTermRepository,
+                            IAccountService accountService,
+                            IAccountRepository accountRepository,
+                            MessageSource messageSource) {
         this.mapper = mapper;
         this.userService = userService;
         this.fixedTermRepository = fixedTermRepository;
         this.accountService = accountService;
         this.accountRepository = accountRepository;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -48,7 +51,8 @@ public class FixedTermService implements IFixedTermService {
 
         FixedTermDeposit fixedTerm = mapper.getMapper().map(fixedTermDto, FixedTermDeposit.class);
 
-        Account account = accountRepository.findByCurrencyAndUser_Email(fixedTermDto.getCurrency(), user.getEmail());
+        Account account = accountRepository.findByCurrencyAndUser_Email(fixedTermDto.getCurrency(),
+                user.getEmail());
 
         fixedTerm.setAccount(account);
         fixedTerm.setCreationDate(LocalDate.now());
@@ -56,25 +60,29 @@ public class FixedTermService implements IFixedTermService {
         long days = ChronoUnit.DAYS.between(fixedTerm.getCreationDate(), fixedTerm.getClosingDate());
 
         if (days < MIN_DAYS) {
-            throw new FixedTermException("Closing Date must be greater or equal to " + MIN_DAYS + " days");
+            throw new FixedTermException(messageSource.getMessage("fixed-term.exception",
+                    new Object[]{MIN_DAYS}, Locale.ENGLISH));
         }
 
         fixedTerm.setInterest(fixedTerm.getAmount() * DAILY_INTEREST * days);
         accountService.updateBalance(account.getId(), fixedTerm.getAmount());
         FixedTermDeposit fixedTermSaved = fixedTermRepository.save(fixedTerm);
-        FixedTermDto fixedTermDtoMapped= mapper.getMapper().map(fixedTermSaved, FixedTermDto.class);
+        FixedTermDto fixedTermDtoMapped = mapper.getMapper().map(fixedTermSaved, FixedTermDto.class);
         fixedTermDtoMapped.setCurrency(fixedTermSaved.getAccount().getCurrency());
 
         return fixedTermDtoMapped;
 
     }
 
+
     @Override
     public SimulatedFixedTermDto simulateFixedTerm(SimulatedFixedTermDto fixedTermDto) {
-        long days = ChronoUnit.DAYS.between(fixedTermDto.getCreationDate(), fixedTermDto.getClosingDate());
+        long days = ChronoUnit.DAYS.between(fixedTermDto.getCreationDate(),
+                fixedTermDto.getClosingDate());
 
         if (days < MIN_DAYS) {
-            throw new FixedTermException("Closing Date must be greater or equal to " + MIN_DAYS + " days");
+            throw new FixedTermException(messageSource.getMessage("fixed-term.exception",
+                    new Object[]{MIN_DAYS}, Locale.ENGLISH));
         }
 
         Double interest = fixedTermDto.getAmount() * DAILY_INTEREST * days;

@@ -2,9 +2,10 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.assembler.AccountModelAssembler;
 import com.alkemy.wallet.assembler.model.AccountModel;
-import com.alkemy.wallet.assembler.model.TransactionModel;
-import com.alkemy.wallet.assembler.model.UserModel;
-import com.alkemy.wallet.dto.*;
+import com.alkemy.wallet.dto.AccountDto;
+import com.alkemy.wallet.dto.AccountUpdateDto;
+import com.alkemy.wallet.dto.BalanceDto;
+import com.alkemy.wallet.dto.BasicAccountDto;
 import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IUserRepository;
@@ -55,14 +56,17 @@ public class AccountController {
     private PagedResourcesAssembler<AccountDto> pagedResourcesAssembler;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<BasicAccountDto>> getAllAccountByUserId(@PathVariable Long userId) throws EmptyResultDataAccessException {
+    public ResponseEntity<List<BasicAccountDto>> getAllAccountByUserId(@PathVariable Long userId)
+            throws EmptyResultDataAccessException {
         List<BasicAccountDto> accounts = accountService.getAccountsByUserId(userId).stream()
-                .map(account -> mapper.getMapper().map(account, BasicAccountDto.class)).collect(Collectors.toList());
+                .map(account -> mapper.getMapper().map(account, BasicAccountDto.class))
+                .collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK).body(accounts);
     }
 
     @GetMapping
-    public ResponseEntity<PagedModel<AccountModel>> getTransactionPage(@RequestParam(defaultValue = "0") int page) {
+    public ResponseEntity<PagedModel<AccountModel>> getTransactionPage(
+            @RequestParam(defaultValue = "0") int page) {
 
         Page<AccountDto> accounts = accountService.findAllAccountsPageable(page);
 
@@ -72,12 +76,15 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<?> postAccount(@RequestHeader(name = "Authorization") String token, @RequestBody BasicAccountDto basicAccountDto) {
+    public ResponseEntity<?> postAccount(@RequestHeader(name = "Authorization") String token,
+                                         @RequestBody BasicAccountDto basicAccountDto) {
         return accountService.postAccount(basicAccountDto, token);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> updateAccountController(@PathVariable Long id, @Valid @RequestBody AccountUpdateDto newTransactionLimit, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> updateAccountController(@PathVariable Long id,
+                                                     @Valid @RequestBody AccountUpdateDto newTransactionLimit,
+                                                     @RequestHeader("Authorization") String token) {
         return accountService.updateAccount(id, newTransactionLimit, token);
     }
 

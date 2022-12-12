@@ -51,12 +51,15 @@ public class TransactionsController {
     }
 
     @GetMapping("/transaction/{id}")
-    public ResponseEntity<?> getTransaction(@PathVariable Long id, @RequestHeader(name = "Authorization") String token) {
+    public ResponseEntity<?> getTransaction(@PathVariable Long id,
+                                            @RequestHeader(name = "Authorization") String token) {
         return transactionService.getTransaction(id, token);
     }
 
     @PatchMapping("/transactions/{id}")
-    public ResponseEntity<?> patchTransaction(@PathVariable("id") Long id, @RequestHeader(name = "Authorization") String token, @RequestBody String description) {
+    public ResponseEntity<?> patchTransaction(@PathVariable("id") Long id,
+                                              @RequestHeader(name = "Authorization") String token,
+                                              @RequestBody String description) {
         return transactionService.patchTransaction(id, token, description);
     }
 
@@ -72,13 +75,14 @@ public class TransactionsController {
     }
 
     @PostMapping("/transactions/sendUsd")
-    public ResponseEntity<Object> sendUsd(@RequestHeader(name = "Authorization") String token, @RequestBody TransactionDto destinedTransactionDto) {
+    public ResponseEntity<Object> sendUsd(@RequestHeader(name = "Authorization") String token,
+                                          @RequestBody TransactionDto destinedTransactionDto) {
         return transactionService.makeTransaction(token, destinedTransactionDto);
     }
 
     @PostMapping("/transactions/sendArs")
-    public ResponseEntity<Object> sendArs(@RequestHeader(name = "Authorization") String
-                                                  token, @RequestBody TransactionDto destinedTransactionDto) {
+    public ResponseEntity<Object> sendArs(@RequestHeader(name = "Authorization") String token,
+                                          @RequestBody TransactionDto destinedTransactionDto) {
         return transactionService.makeTransaction(token, destinedTransactionDto);
     }
 

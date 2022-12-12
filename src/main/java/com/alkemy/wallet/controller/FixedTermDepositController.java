@@ -18,12 +18,13 @@ public class FixedTermDepositController {
     private IFixedTermService fixedTermService;
 
     @PostMapping("/fixedDeposit")
-    public ResponseEntity<FixedTermDto> createFixedDeposit (@Valid @RequestBody FixedTermDto fixedTermDto, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<FixedTermDto> createFixedDeposit(@Valid @RequestBody FixedTermDto fixedTermDto,
+                                                           @RequestHeader("Authorization") String token) {
         return ResponseEntity.status(HttpStatus.CREATED).body(fixedTermService.createFixedTerm(fixedTermDto, token));
     }
 
     @PostMapping("/fixedTermDeposit/simulate")
-    public ResponseEntity<SimulatedFixedTermDto> simulateFixedDeposit (@Valid @RequestBody SimulatedFixedTermDto fixedTermDto) {
+    public ResponseEntity<SimulatedFixedTermDto> simulateFixedDeposit(@Valid @RequestBody SimulatedFixedTermDto fixedTermDto) {
         return ResponseEntity.status(HttpStatus.OK).body(fixedTermService.simulateFixedTerm(fixedTermDto));
     }
 

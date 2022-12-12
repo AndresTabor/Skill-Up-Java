@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,6 +34,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
@@ -68,6 +70,9 @@ class FixedTermDepositControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private MessageSource messageSource;
+
 
     @BeforeEach
     void setup() {
@@ -168,7 +173,7 @@ class FixedTermDepositControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof FixedTermException))
                 .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
-                        "Closing Date must be greater or equal to " + MIN_DAYS + " days"));
+                        messageSource.getMessage("fixed-term.exception", new Object[]{MIN_DAYS}, Locale.ENGLISH)));
 
     }
 
@@ -239,7 +244,7 @@ class FixedTermDepositControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof FixedTermException))
                 .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
-                        "Closing Date must be greater or equal to " + MIN_DAYS + " days"));
+                        messageSource.getMessage("fixed-term.exception", new Object[]{MIN_DAYS}, Locale.ENGLISH)));
     }
 
 }

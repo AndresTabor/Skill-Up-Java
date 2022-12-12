@@ -1,11 +1,12 @@
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.model.enums.Currency;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Data
-@RequiredArgsConstructor
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AccountDto {
 
     private Long id;

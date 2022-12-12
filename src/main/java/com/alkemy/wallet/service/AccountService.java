@@ -12,6 +12,7 @@ import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -35,13 +37,15 @@ public class AccountService implements IAccountService {
     private final IUserService userService;
     private final ModelMapper mapper;
     private final JwtUtil jwtUtil;
+    private final MessageSource messageSource;
 
-    public AccountService(IAccountRepository accountRepository, IFixedTermRepository fixedTermRepository, IUserService userService, ModelMapper mapper, JwtUtil jwtUtil) {
+    public AccountService(IAccountRepository accountRepository, IFixedTermRepository fixedTermRepository, IUserService userService, ModelMapper mapper, JwtUtil jwtUtil, MessageSource messageSource) {
         this.accountRepository = accountRepository;
         this.fixedTermRepository = fixedTermRepository;
         this.userService = userService;
         this.mapper = mapper;
         this.jwtUtil = jwtUtil;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -125,11 +129,13 @@ public class AccountService implements IAccountService {
         try {
             User user = userService.findLoggedUser(token);
             Account account = accountRepository.findById(id).orElseThrow(()
-                    -> new ResourceNotFoundException("Account with id " + id + " not found"));
+                    -> new ResourceNotFoundException(messageSource.getMessage("account-not-found.exception",
+                    new Object[] {id}, Locale.ENGLISH)));
             List<Account> accounts = accountRepository.findAllByUser_Email(user.getEmail());
 
             if (accounts.stream().noneMatch(c -> c.getId().equals(id))) {
-                throw new ResourceNotFoundException("Account with id  " + id + " does not belong to this user");
+                throw new ResourceNotFoundException(messageSource.getMessage("account-not-found-for-user.exception",
+                        new Object[] {id}, Locale.ENGLISH));
             }
 
             mapper.map(newTransactionLimit, account);
@@ -191,14 +197,14 @@ public class AccountService implements IAccountService {
     @Override
     public AccountDto updateBalance(Long id, Double amount) {
         if (amount <= 0) {
-            throw new NoAmountException("Cannot make a transaction without amount");
+            throw new NoAmountException(messageSource.getMessage("amount.exception", null, Locale.ENGLISH));
         }
         Optional<Account> foundAccount = accountRepository.findById(id);
         if (!foundAccount.isPresent()) {
-            throw new ResourceFoundException("Account not found with the given id " + id);
+            throw new ResourceFoundException(messageSource.getMessage("account-not-found.exception", new Object[] {id}, Locale.ENGLISH));
         }
         if (foundAccount.get().getBalance() < amount) {
-            throw new NotEnoughCashException("Not enough cash");
+            throw new NotEnoughCashException(messageSource.getMessage("not-enough-cash.exception", null, Locale.ENGLISH));
         }
         Account account = foundAccount.get();
         account.setBalance(account.getBalance() - amount);

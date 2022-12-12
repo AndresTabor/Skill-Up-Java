@@ -10,8 +10,8 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class RequestUserDto {
 
     private Long id;
