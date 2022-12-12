@@ -6,7 +6,6 @@ import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.service.interfaces.ICustomUserDetailsService;
 import com.alkemy.wallet.service.interfaces.IUserService;
-import com.alkemy.wallet.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,7 +38,10 @@ public class UserController {
     @PatchMapping("/{id}")
     @Operation(summary = "Update user",
             description = "Provide user logged details to update",
-            tags = "Patch")
+            tags = "Patch",
+            parameters = @Parameter(name = "Request user dto",
+                    description = "First name, last name, email and password to update user",
+                    required = true))
     @ApiResponses(value = {
         @ApiResponse(responseCode = "202", description = "Successfully Logged",
                 content = {
@@ -50,10 +52,7 @@ public class UserController {
         @ApiResponse(responseCode = "403", description = "Access denied",
                 content = {
                     @Content(mediaType = "application/json")})})
-    public ResponseEntity<ResponseUserDto> updateUser(
-            @Parameter(name = "First name, last name, email and password to update user",
-                    required = true)
-            @RequestBody RequestUserDto requestUserDto) {
+    public ResponseEntity<ResponseUserDto> updateUser(@RequestBody RequestUserDto requestUserDto) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(customUserDetailsService.update(requestUserDto));
     }
 
@@ -61,7 +60,10 @@ public class UserController {
     @GetMapping("/{id}")
     @Operation(summary = "User logged details",
             description = "Provides user logged details to verify",
-            tags = "Get")
+            tags = "Get",
+            parameters = @Parameter(name = "User id",
+                    description = "Current logged user´s id",
+                    required = true))
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "User details found",
                 content = {
@@ -72,10 +74,7 @@ public class UserController {
         @ApiResponse(responseCode = "403", description = "Access denied",
                 content = {
                     @Content(mediaType = "application/json")})})
-    public ResponseEntity<ResponseUserDto> getUserLoggedDetails(
-            @Parameter(name = "Current logged user´s id",
-                    required = true)
-            @PathVariable Long id) {
+    public ResponseEntity<ResponseUserDto> getUserLoggedDetails(@PathVariable Long id) {
         return ResponseEntity.ok().body(customUserDetailsService.getUserLoggedById(id));
     }
 
@@ -86,14 +85,11 @@ public class UserController {
             tags = "Get")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Users found",
-                content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseUserDto.class))}),
+                content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseUserDto.class))}),
         @ApiResponse(responseCode = "404", description = "There is no user registered",
-                content = {
-                    @Content(mediaType = "application/json")}),
+                content = {@Content(mediaType = "application/json")}),
         @ApiResponse(responseCode = "403", description = "Access denied",
-                content = {
-                    @Content(mediaType = "application/json")})})
+                content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<?> getUserPage(@RequestParam(defaultValue = "0") int page) {
         try {
             Page<ResponseUserDto> users = customUserDetailsService.findAllUsersPageable(page);
@@ -106,7 +102,25 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN','USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@RequestHeader(value = "Authorization") String token, @PathVariable Long id) {
+    @Operation(summary = "Delete user",
+            description = "Deletes the targeted user",
+            tags = "Delete",
+            parameters = @Parameter(name = "User id",
+                    description = "Targeted user´s id",
+                    required = true))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "User deleted",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "403", description = "Access denied",
+                    content = {@Content(mediaType = "application/json")})})
+    public ResponseEntity<Object> delete(
+            @Parameter(name = "Token",
+                    required = true,
+                    hidden = true)
+            @RequestHeader(value = "Authorization") String token,
+            @PathVariable Long id) {
 
         iUserService.softDelete(token, id);
 
