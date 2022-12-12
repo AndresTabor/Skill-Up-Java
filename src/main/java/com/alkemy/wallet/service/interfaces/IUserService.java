@@ -12,4 +12,7 @@ public interface IUserService {
     User findLoggedUser(String token);
 
     UserDto findByEmail(String email );
+
+    public void softDelete(String token,Long id);
+    
 }

@@ -28,7 +28,6 @@ public class DataLoaderUser implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-
         /* ROLE_USER */
 
         RequestUserDto user;
