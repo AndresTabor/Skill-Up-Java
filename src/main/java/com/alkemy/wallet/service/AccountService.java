@@ -115,7 +115,7 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public boolean checkAccountLimit(Account senderAccount, TransactionDto transactionDto) {
+    public boolean checkAccountLimit(Account senderAccount, RequestTransactionDto transactionDto) {
         if (transactionDto.getAmount() < senderAccount.getTransactionLimit())
             return true;
         else throw new AccountLimitException("Account transaction limit exceeded");

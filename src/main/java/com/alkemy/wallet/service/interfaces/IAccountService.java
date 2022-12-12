@@ -24,7 +24,7 @@ public interface IAccountService {
 
     Account getAccountByCurrency(Long user_id, Currency currency);
 
-    boolean checkAccountLimit(Account senderAccount, TransactionDto transactionDto);
+    boolean checkAccountLimit(Account senderAccount, RequestTransactionDto transactionDto);
 
     ResponseEntity<?> updateAccount(Long id, AccountUpdateDto newTransactionLimit, String token);
 

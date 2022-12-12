@@ -16,7 +16,7 @@ public class AccountDto {
 
     private Double balance;
 
-    private boolean softDelete;
+//    private boolean softDelete;
 
     private Long userId;
 

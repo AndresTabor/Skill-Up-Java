@@ -1,9 +1,9 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.controller.AuthController;
 import com.alkemy.wallet.controller.TransactionsController;
 import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.TransactionDto;
+import com.alkemy.wallet.dto.RequestTransactionDto;
+import com.alkemy.wallet.dto.ResponseTransactionDto;
 import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Transaction;
@@ -14,6 +14,7 @@ import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IUserService;
+import com.alkemy.wallet.util.DataLoaderUser;
 import com.alkemy.wallet.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -21,14 +22,11 @@ import org.junit.jupiter.api.BeforeEach;
 
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -38,17 +36,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.print.attribute.standard.Media;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
@@ -58,7 +52,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({ObjectMapper.class, TransactionsController.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
 class TransactionSendUsdTest {
-
+    @MockBean
+    DataLoaderUser dataLoaderUser;
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -76,10 +71,10 @@ class TransactionSendUsdTest {
     @InjectMocks
     private TransactionService transactionService;
     private User userTest, userTest2;
-    private TransactionDto transactionBetweenUsdAccounts;
+    private RequestTransactionDto transactionBetweenUsdAccounts;
     private Transaction transaction = new Transaction();
 
-    private TransactionDto transactionDto;
+    private ResponseTransactionDto responseTransactionDto;
     private Account senderAccountTest, receivingAccountTest;
 
     @Autowired
@@ -127,10 +122,9 @@ class TransactionSendUsdTest {
         accountsTest = new ArrayList<>();
         accountsTest.add(senderAccountTest);
 
-        transactionBetweenUsdAccounts = new TransactionDto();
+        transactionBetweenUsdAccounts = new RequestTransactionDto();
         transactionBetweenUsdAccounts.setDescription("Descripcion de prueba USD");
         transactionBetweenUsdAccounts.setAmount(50.);
-        transactionBetweenUsdAccounts.setTransactionDate(new Date());
         transactionBetweenUsdAccounts.setAccount(mapper.getMapper().map(receivingAccountTest, AccountDto.class));
 
         transaction = mapper.getMapper().map(transactionBetweenUsdAccounts, Transaction.class);
@@ -141,8 +135,6 @@ class TransactionSendUsdTest {
         when(userRepository.findByEmail(jwtUtil.getValue(token))).thenReturn(userTest);
         when(accountRespository.findAllByUser_Id(anyLong())).thenReturn(accountsTest);
         when(accountService.getAccountByCurrency(userTest.getId(), Currency.usd)).thenReturn(senderAccountTest);
-
-
     }
 
     @Test

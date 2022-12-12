@@ -1,9 +1,8 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.controller.AuthController;
 import com.alkemy.wallet.controller.TransactionsController;
 import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.TransactionDto;
+import com.alkemy.wallet.dto.RequestTransactionDto;
 import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Transaction;
@@ -12,6 +11,7 @@ import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.repository.IUserRepository;
+import com.alkemy.wallet.util.DataLoaderUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Date;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,6 +47,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import({ObjectMapper.class, TransactionsController.class})
 @TestPropertySource(locations = "classpath:application-test.properties")
 class TransactionServiceTest {
+    @MockBean
+    DataLoaderUser dataLoaderUser;
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -64,17 +65,13 @@ class TransactionServiceTest {
 
     private AccountDto accountUsdDto, accountArsDto;
     private Account accountTest;
-    private TransactionDto transactionDeposit,transactionDepositWithNoAmount;
-
+    private RequestTransactionDto transactionDeposit,transactionDepositWithNoAmount;
     private Transaction transaction = new Transaction();
-
     private User userTest;
     @Autowired
     private Mapper mapper;
-
     @Autowired
     private ObjectMapper objectMapper;
-
 
     @BeforeEach
     void setUp() {
@@ -96,16 +93,15 @@ class TransactionServiceTest {
                 .transactionLimit(3000.).build();
 
 
-        transactionDeposit = new TransactionDto();
+        transactionDeposit = new RequestTransactionDto();
         transactionDeposit.setDescription("Descripcion de prueba");
         transactionDeposit.setAmount(1000.0);
-        transactionDeposit.setTransactionDate(new Date());
         transactionDeposit.setAccount(mapper.getMapper().map(accountTest, AccountDto.class));
 
-        transactionDepositWithNoAmount= new TransactionDto();
+        transactionDepositWithNoAmount= new RequestTransactionDto();
         transactionDepositWithNoAmount.setDescription("Descripcion de prueba error");
         transactionDepositWithNoAmount.setAmount(0.);
-        transactionDepositWithNoAmount.setTransactionDate(new Date());
+
         transactionDepositWithNoAmount.setAccount(mapper.getMapper().map(accountTest, AccountDto.class));
 
     }
