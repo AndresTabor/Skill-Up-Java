@@ -9,8 +9,10 @@ import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.ITransactionService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -135,16 +137,20 @@ public class TransactionsController {
     @PostMapping("/transactions/sendUsd")
     @Operation(summary = "Send USD",
             description = "Generates a transaction in USD from a logged user",
-            tags = "Post")
+            tags = "Post",
+            parameters = @Parameter(name = "TransactionDto",
+                    description = "Transaction info and destined account",
+                    required = true))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction generated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class))}),
             @ApiResponse(responseCode = "400", description = "Something went wrong",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<Object> sendUsd(
+            @Parameter(name = "Token",
+                    required = true,
+                    hidden = true)
             @RequestHeader(name = "Authorization") String token,
-            @Parameter(name = "Transaction info and destined account",
-                    required = true)
             @RequestBody TransactionDto destinedTransactionDto) {
         return transactionService.makeTransaction(token, destinedTransactionDto);
     }

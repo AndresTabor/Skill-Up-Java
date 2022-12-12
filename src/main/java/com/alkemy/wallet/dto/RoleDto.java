@@ -1,6 +1,7 @@
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.listing.RoleName;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

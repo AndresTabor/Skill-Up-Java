@@ -4,10 +4,12 @@ import com.alkemy.wallet.assembler.model.TransactionModel;
 import com.alkemy.wallet.controller.TransactionsController;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.model.Transaction;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
+@Hidden
 @Component
 public class TransactionModelAssembler extends RepresentationModelAssemblerSupport<TransactionDto, TransactionModel> {
 

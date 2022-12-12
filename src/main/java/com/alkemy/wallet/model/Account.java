@@ -1,6 +1,7 @@
 package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.model.enums.Currency;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;

@@ -1,6 +1,7 @@
 package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.model.enums.TypeOfTransaction;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;

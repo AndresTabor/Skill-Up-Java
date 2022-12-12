@@ -6,12 +6,14 @@ import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.CustomUserDetailsService;
 import com.alkemy.wallet.service.interfaces.IRoleService;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+@Hidden
 @Component
 public class DataLoaderUser implements CommandLineRunner {
 
