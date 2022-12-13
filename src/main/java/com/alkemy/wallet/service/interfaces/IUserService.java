@@ -14,8 +14,6 @@ public interface IUserService {
 
     User findLoggedUser(String token);
 
-    UserDto findByEmail(String email);
-
     ResponseEntity<?> softDelete(String token, Long id);
 
     ResponseEntity<?> login(LoginUserDto loginUser);

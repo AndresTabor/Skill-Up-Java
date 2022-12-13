@@ -127,6 +127,7 @@ public class TransactionsController {
                     description = "Indicate user's id in order to find his transactions"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction updated",
+
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
             @ApiResponse(responseCode = "404", description = "Nothing found",
                     content = {@Content(mediaType = "application/json")}),
@@ -139,6 +140,7 @@ public class TransactionsController {
                     required = true,
                     hidden = true)
             @RequestHeader("Authorization") String token) {
+
         Page<ResponseTransactionDto> transactions = transactionService.findAllTransactionsByUserIdPageable(userId, page, token);
 
         PagedModel<TransactionModel> model = pagedResourcesAssembler.toModel(transactions, transactionModelAssembler);
@@ -154,6 +156,7 @@ public class TransactionsController {
                     description = "Transaction info and destined account"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction generated",
+
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RequestTransactionDto.class))}),
             @ApiResponse(responseCode = "400", description = "Something went wrong",
                     content = {@Content(mediaType = "application/json")})})
@@ -179,6 +182,7 @@ public class TransactionsController {
                     description = "Transaction info and destined account"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction generated",
+
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
             @ApiResponse(responseCode = "400", description = "Something went wrong",
                     content = {@Content(mediaType = "application/json")})})
@@ -204,6 +208,7 @@ public class TransactionsController {
                     description = "Indicate deposit info in order to execute it"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Deposit generated",
+
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
             @ApiResponse(responseCode = "404", description = "Account not found",
                     content = {@Content(mediaType = "application/json")}),
@@ -226,6 +231,7 @@ public class TransactionsController {
                     description = "Indicate payment info in order to execute it"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Payment generated",
+
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
             @ApiResponse(responseCode = "404", description = "Account not found",
                     content = {@Content(mediaType = "application/json")}),

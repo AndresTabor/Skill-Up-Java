@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Hidden
 @Component
-public class UserModelAssembler extends RepresentationModelAssemblerSupport<ResponseUserDto, UserModel> {
+public class UserModelAssembler
+        extends RepresentationModelAssemblerSupport<ResponseUserDto, UserModel> {
 
     public UserModelAssembler() {
         super(UserController.class, UserModel.class);

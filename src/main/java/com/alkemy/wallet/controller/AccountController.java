@@ -2,10 +2,10 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.assembler.AccountModelAssembler;
 import com.alkemy.wallet.assembler.model.AccountModel;
-import com.alkemy.wallet.dto.*;
 import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.BasicAccountDto;
 import com.alkemy.wallet.dto.AccountUpdateDto;
+import com.alkemy.wallet.dto.BalanceDto;
+import com.alkemy.wallet.dto.BasicAccountDto;
 import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IUserRepository;
@@ -74,7 +74,8 @@ public class AccountController {
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<List<BasicAccountDto>> getAllAccountByUserId(@PathVariable Long userId) throws EmptyResultDataAccessException {
         List<BasicAccountDto> accounts = accountService.getAccountsByUserId(userId).stream()
-                .map(account -> mapper.getMapper().map(account, BasicAccountDto.class)).collect(Collectors.toList());
+                .map(account -> mapper.getMapper().map(account, BasicAccountDto.class))
+                .collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.OK).body(accounts);
     }
 
@@ -90,7 +91,6 @@ public class AccountController {
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<PagedModel<AccountModel>> getTransactionPage(@RequestParam(defaultValue = "0") int page) {
-
         Page<AccountDto> accounts = accountService.findAllAccountsPageable(page);
 
         PagedModel<AccountModel> model = pagedResourcesAssembler.toModel(accounts, accountModelAssembler);
@@ -109,6 +109,7 @@ public class AccountController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicAccountDto.class))}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
+
     public ResponseEntity<?> postAccount(
             @Parameter(name = "Token",
                     required = true,

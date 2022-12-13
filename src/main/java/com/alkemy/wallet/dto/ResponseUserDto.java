@@ -1,27 +1,27 @@
 package com.alkemy.wallet.dto;
 
-import io.swagger.v3.oas.annotations.Hidden;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class ResponseUserDto {
 
-    @NotEmpty
+    @NotEmpty(message = "{firstname.notnull}")
     private String firstName;
 
-    @NotEmpty
+    @NotEmpty(message = "{lastname.notnull}")
     private String lastName;
 
     @NotEmpty
-    @Email(message = "the email must be real email")
+    @Email(message = "{email.notnull}")
     private String email;
 
     private String token;

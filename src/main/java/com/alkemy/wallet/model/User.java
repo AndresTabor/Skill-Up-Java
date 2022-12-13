@@ -20,40 +20,40 @@ import java.util.Date;
 public class User {
 	
 	@Id
-	@Column(name = "USER_ID")
+	@Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "FIRST_NAME", nullable=false)
-	@NotEmpty
+	@NotEmpty(message = "{firstname.notnull}")
+	@Column(name = "first_name", nullable=false)
 	private String firstName;
 
-	@Column(name = "LAST_NAME", nullable=false)
-	@NotEmpty
+	@NotEmpty(message = "{lastname.notnull}")
+	@Column(name = "last_name", nullable=false)
 	private String lastName;
 
-	@Column(name = "EMAIL", unique=true, nullable=false)
-	@Email
-	@NotEmpty
+	@Email(message = "{email.pattern}")
+	@NotEmpty(message = "{email.notnull}")
+	@Column(name = "email", unique=true, nullable=false)
 	private String email;
 
-	@Column(name = "PASSWORD", nullable=false)
-	@NotEmpty
+	@NotEmpty(message = "{password.notnull}")
+	@Column(name = "password", nullable=false)
 	private String password;
 
 	@ManyToOne
-	@JoinColumn(name = "ROLE_ID")
+	@JoinColumn(name = "role_id")
 	private Role role; // Clave foranea hacia ID de Role
 
-	@Column(name = "CREATION_DATE")
+	@Column(name = "creation_date")
 	@CreationTimestamp
 	private Date creationDate;
 
-	@Column(name = "UPDATE_DATE")
+	@Column(name = "update_date")
 	@UpdateTimestamp
 	private Date updateDate;
 
-	@Column(name = "SOFT_DELETE")
+	@Column(name = "soft_delete")
 	private boolean softDelete = false;
 
 }

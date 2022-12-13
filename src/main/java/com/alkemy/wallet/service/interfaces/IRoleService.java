@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 @Hidden
 public interface IRoleService {
 
-    RoleDto findByName(RoleName roleUser);
+    Role findByName(RoleName roleUser);
 
     Role createRole(Role role);
 }

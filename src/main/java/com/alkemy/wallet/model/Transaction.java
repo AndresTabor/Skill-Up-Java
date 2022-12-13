@@ -18,27 +18,27 @@ import java.util.Date;
 public class Transaction {
 
     @Id
-    @Column(name = "TRANSACTION_ID", unique = true, nullable = false)
+    @Column(name = "transaction_id", unique = true, nullable = false)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "AMOUNT")
-    @NotNull
+    @NotNull(message = "{amount.notnull}")
+    @Column(name = "amount")
     private Double amount;
 
-    @NotNull
+    @NotNull(message = "{typeoftransaction.notnull}")
     @Enumerated(EnumType.STRING)
-    @Column(name = "TYPE")
+    @Column(name = "type")
     private TypeOfTransaction type;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "description")
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "ACCOUNT_ID")
+    @JoinColumn(name = "account_id")
     private Account account;
 
-    @Column(name = "TRANSACTION_DATE")
+    @Column(name = "transaction_date")
     @CreationTimestamp
     private Date transactionDate;
 

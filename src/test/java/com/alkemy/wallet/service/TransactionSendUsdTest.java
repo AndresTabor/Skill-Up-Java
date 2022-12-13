@@ -17,9 +17,8 @@ import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.DataLoaderUser;
 import com.alkemy.wallet.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
-
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
@@ -30,6 +29,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -50,10 +50,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ContextConfiguration
 @Import({ObjectMapper.class, TransactionsController.class})
+@ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
 class TransactionSendUsdTest {
-    @MockBean
-    DataLoaderUser dataLoaderUser;
+
+    private final String token = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NzA4Njc3NTMsInN1YiI6InZpY3RvcmlvLnNhcm5hZ2xpYUBnbWFpbC5jb20iLCJpc3MiOiJNYWluIiwiZXhwIjoxNjcxNDcyNTUzfQ.-LQO6GnpJu7IPij-U6np15gVzT5sRQWQ1y_IeelcrCU";
+    @Autowired
+    Mapper mapper;
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -76,16 +79,9 @@ class TransactionSendUsdTest {
 
     private ResponseTransactionDto responseTransactionDto;
     private Account senderAccountTest, receivingAccountTest;
-
-    @Autowired
-    Mapper mapper;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     private List<Account> accountsTest;
-    private final String token = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NzA4Njc3NTMsInN1YiI6InZpY3RvcmlvLnNhcm5hZ2xpYUBnbWFpbC5jb20iLCJpc3MiOiJNYWluIiwiZXhwIjoxNjcxNDcyNTUzfQ.-LQO6GnpJu7IPij-U6np15gVzT5sRQWQ1y_IeelcrCU";
-
 
     @BeforeEach
     void setUp() {
@@ -151,8 +147,8 @@ class TransactionSendUsdTest {
     @WithMockUser
     void createTransactionsUsdWithoutAuthorization() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/transactions/sendUsd")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(transactionBetweenUsdAccounts)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(transactionBetweenUsdAccounts)))
                 .andExpect(status().isBadRequest());
     }
 }

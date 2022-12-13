@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
@@ -17,6 +18,7 @@ public class RoleDto {
 
     private Long id;
 
+    @NotNull(message = "{rolename.notnull}")
     private RoleName name;
 
     private String description;
