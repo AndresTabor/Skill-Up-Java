@@ -13,7 +13,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile("!test")
 public class DataLoaderUser implements CommandLineRunner {
+
+    @Autowired
+    private IRoleService roleService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -26,6 +30,14 @@ public class DataLoaderUser implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        Role role;
+        role = Role.builder()
+                .name(RoleName.ROLE_ADMIN).build();
+        roleService.createRole(role);
+
+        role = Role.builder()
+                .name(RoleName.ROLE_USER).build();
+        roleService.createRole(role);
 
         /* ROLE_USER */
 
@@ -111,13 +123,13 @@ public class DataLoaderUser implements CommandLineRunner {
                 .build();
         userService.save(user);
 
-        user = RequestUserDto.builder()
-                .firstName("test")
-                .lastName("test")
-                .email("test@gmail.com")
-                .password("test")
-                .build();
-        userService.save(user);
+//        user = RequestUserDto.builder()
+//                .firstName("test")
+//                .lastName("test")
+//                .email("test@gmail.com")
+//                .password("test")
+//                .build();
+//        userService.save(user);
 
         /* ROLE_ADMIN */
         user = RequestUserDto.builder()

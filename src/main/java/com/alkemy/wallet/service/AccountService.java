@@ -64,10 +64,12 @@ public class AccountService implements IAccountService {
             }
         }
 
-        Account account = mapper.map(accountCreateDto, Account.class);
+        Account account = new Account(accountCreateDto.getCurrency());
 
         account.setUser(user);
         account.setCreationDate(new Date());
+
+        System.out.println(account);
 
         return mapper.map(accountRepository.save(account), BasicAccountDto.class);
 

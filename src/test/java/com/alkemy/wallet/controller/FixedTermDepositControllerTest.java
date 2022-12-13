@@ -22,7 +22,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -45,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration
+@ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
 class FixedTermDepositControllerTest {
 
@@ -57,10 +61,6 @@ class FixedTermDepositControllerTest {
     IFixedTermRepository fixedTermRepository;
     @MockBean
     IAccountRepository accountRepository;
-    User user;
-    Role role;
-    Account account;
-    String token;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -69,6 +69,11 @@ class FixedTermDepositControllerTest {
     private JwtUtil jwtUtil;
     @Autowired
     private MessageSource messageSource;
+
+    User user;
+    Role role;
+    Account account;
+    String token;
 
 
     @BeforeEach
@@ -96,13 +101,14 @@ class FixedTermDepositControllerTest {
                 .transactionLimit(300000D)
                 .creationDate(new Date())
                 .user(user)
-                .currency(Currency.ARS)
+                .currency(Currency.ars)
                 .build();
 
         token = jwtUtil.create(user.getEmail());
     }
 
     @Test
+    @WithMockUser
     void when_createFixedDeposit_successfully() throws Exception {
 
         FixedTermDto fixedTermDto = FixedTermDto.builder()
@@ -110,7 +116,7 @@ class FixedTermDepositControllerTest {
                 .amount(2000D)
                 .creationDate(LocalDate.now())
                 .closingDate(LocalDate.now().plusDays(35))
-                .currency(Currency.ARS)
+                .currency(Currency.ars)
                 .build();
 
         FixedTermDeposit fixedTermDeposit = FixedTermDeposit.builder()
@@ -148,6 +154,7 @@ class FixedTermDepositControllerTest {
     }
 
     @Test
+    @WithMockUser
     void when_createFixedDeposit_fails_withPeriodLessThan30Days() throws Exception {
 
         FixedTermDto fixedTermDto = FixedTermDto.builder()
@@ -155,7 +162,7 @@ class FixedTermDepositControllerTest {
                 .amount(2000D)
                 .creationDate(LocalDate.now())
                 .closingDate(LocalDate.now().plusDays(25))
-                .currency(Currency.ARS)
+                .currency(Currency.ars)
                 .build();
 
         when(userRepository.findByEmail(anyString())).thenReturn(user);
@@ -170,11 +177,12 @@ class FixedTermDepositControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof FixedTermException))
                 .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
-                        messageSource.getMessage("fixed-term.exception", new Object[]{MIN_DAYS}, Locale.ENGLISH)));
+                        messageSource.getMessage("fixedterm.exception", new Object[]{MIN_DAYS}, Locale.ENGLISH)));
 
     }
 
     @Test
+    @WithMockUser
     void when_createFixedDeposit_withNotEnoughCash() throws Exception {
 
         FixedTermDto fixedTermDto = FixedTermDto.builder()
@@ -182,7 +190,7 @@ class FixedTermDepositControllerTest {
                 .amount(200000D)
                 .creationDate(LocalDate.now())
                 .closingDate(LocalDate.now().plusDays(60))
-                .currency(Currency.ARS)
+                .currency(Currency.ars)
                 .build();
 
         when(userRepository.findByEmail(anyString())).thenReturn(user);
@@ -197,7 +205,7 @@ class FixedTermDepositControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NotEnoughCashException))
                 .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
-                        "Not enough cash"));
+                        messageSource.getMessage("notenoughcash.exception", new Object[]{MIN_DAYS}, Locale.ENGLISH)));
     }
 
     @Test
@@ -207,7 +215,7 @@ class FixedTermDepositControllerTest {
                 .amount(2000D)
                 .creationDate(LocalDate.now())
                 .closingDate(LocalDate.now().plusDays(30))
-                .currency(Currency.ARS)
+                .currency(Currency.ars)
                 .build();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/fixedTermDeposit/simulate")
@@ -231,7 +239,7 @@ class FixedTermDepositControllerTest {
                 .amount(2000D)
                 .creationDate(LocalDate.now())
                 .closingDate(LocalDate.now().plusDays(25))
-                .currency(Currency.ARS)
+                .currency(Currency.ars)
                 .build();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/fixedTermDeposit/simulate")
@@ -241,7 +249,7 @@ class FixedTermDepositControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof FixedTermException))
                 .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
-                        messageSource.getMessage("fixed-term.exception", new Object[]{MIN_DAYS}, Locale.ENGLISH)));
+                        messageSource.getMessage("fixedterm.exception", new Object[]{MIN_DAYS}, Locale.ENGLISH)));
     }
 
 }

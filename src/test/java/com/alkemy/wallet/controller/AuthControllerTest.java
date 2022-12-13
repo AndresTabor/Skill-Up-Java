@@ -2,9 +2,13 @@ package com.alkemy.wallet.controller;
 
 import com.alkemy.wallet.dto.LoginUserDto;
 import com.alkemy.wallet.dto.RequestUserDto;
-import com.alkemy.wallet.repository.IRoleRepository;
+import com.alkemy.wallet.model.Account;
+import com.alkemy.wallet.model.Role;
+import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.CustomUserDetailsService;
+import com.alkemy.wallet.service.interfaces.IRoleService;
+import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Matchers;
@@ -16,13 +20,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.Date;
+
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -30,22 +38,30 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Import({ObjectMapper.class, AuthController.class})
+@ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class AuthControllerTest {
 
     @Autowired
-    public IUserRepository userRepo;
-    @Autowired
-    public IRoleRepository roleRepo;
-    RequestUserDto requestUserDto;
+    public IUserRepository userRepository;
 
     @Autowired
-    private MockMvc mockMvc;
+    public IUserService userService;
+
+    @Autowired
+    IRoleService roleService;
+    User user;
 
 //    @MockBean
 //    DataLoaderUser dataLoaderUser;
-
+    Role role;
+    Account accountArs;
+    Account accountUsd;
+    RequestUserDto requestUserDto;
+    String token;
+    @Autowired
+    private MockMvc mockMvc;
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
     @Autowired
@@ -53,13 +69,31 @@ class AuthControllerTest {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private IUserRepository userRepository;
-    @Autowired
     private ObjectMapper objectMapper;
+
+    @BeforeAll
+    static void init() {
+
+    }
+
+    @BeforeEach
+    void setup() {
+        user = User.builder()
+                .id(1L)
+                .firstName("test")
+                .lastName("test")
+                .email("test@test.com")
+                .password("test")
+                .creationDate(new Date())
+                .role(role)
+                .build();
+
+
+
+    }
 
     @DisplayName("Signing up success")
     @Test
-    @Order(2)
     void signUpSuccess() throws Exception {
 
         requestUserDto = RequestUserDto.builder()
@@ -67,8 +101,6 @@ class AuthControllerTest {
                 .lastName("test")
                 .email("test@test.com")
                 .password("test").build();
-
-
 
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/register")
                         .with(csrf())
@@ -84,7 +116,6 @@ class AuthControllerTest {
 
     @DisplayName("Signing up failed notNull nulled")
     @Test
-    @Order(1)
     void signUpFail() throws Exception {
 
         requestUserDto = RequestUserDto.builder()
@@ -102,12 +133,19 @@ class AuthControllerTest {
 
     @DisplayName("Signing in success")
     @Test
-    @Order(4)
     void signInSuccess() throws Exception {
 
+        requestUserDto = RequestUserDto.builder()
+                .firstName("user")
+                .lastName("user")
+                .email("user@user.com")
+                .password("user").build();
+
+        customUserDetailsService.save(requestUserDto);
+
         LoginUserDto loginDto = LoginUserDto.builder()
-                .email("test@test.com")
-                .password("test").build();
+                .email("user@user.com")
+                .password("user").build();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
                         .with(csrf())
@@ -118,10 +156,17 @@ class AuthControllerTest {
 
     @DisplayName("Signing in failed wrong pass")
     @Test
-    @Order(3)
     void signInFailed() throws Exception {
+        requestUserDto = RequestUserDto.builder()
+                .firstName("user_fail")
+                .lastName("user_fail")
+                .email("user_fail@user.com")
+                .password("user_fail").build();
+
+        customUserDetailsService.save(requestUserDto);
+
         LoginUserDto loginDto = LoginUserDto.builder()
-                .email("test@test.com")
+                .email("user_fail@user.com")
                 .password("cualquiercosa").build();
 
         mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")

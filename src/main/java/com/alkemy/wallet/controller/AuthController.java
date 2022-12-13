@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
 @RequestMapping("/auth")
@@ -51,7 +52,7 @@ public class AuthController {
     public ResponseEntity<ResponseUserDto> signUp(
             @Parameter(description = "Email, first name, last name and password to register user",
                     required = true)
-            @Valid @RequestBody RequestUserDto requestUserDto) {
+            @Valid @RequestBody RequestUserDto requestUserDto) throws SQLIntegrityConstraintViolationException {
         ResponseUserDto userSaved = customUserDetailsService.save(requestUserDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(userSaved);
     }

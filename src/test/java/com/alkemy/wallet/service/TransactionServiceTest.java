@@ -1,6 +1,6 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.controller.AuthController;
+import com.alkemy.wallet.controller.TransactionsController;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.mapper.Mapper;
@@ -23,6 +23,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,8 +43,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-@Import({ObjectMapper.class, AuthController.class})
-@TestPropertySource(locations = "classpath:applicationtest.properties")
+@ContextConfiguration
+@ActiveProfiles("test")
+@Import({ObjectMapper.class, TransactionsController.class})
+@TestPropertySource(locations = "classpath:application-test.properties")
 class TransactionServiceTest {
     @Autowired
     private MockMvc mockMvc;
@@ -87,7 +92,7 @@ class TransactionServiceTest {
                 .id(1L)
                 .balance(0.)
                 .user(userTest)
-                .currency(Currency.ARS)
+                .currency(Currency.ars)
                 .transactionLimit(3000.).build();
 
         transactionDeposit = new TransactionDto();
@@ -106,8 +111,9 @@ class TransactionServiceTest {
 
 
     @Test
+    @WithMockUser
     void createDeposit() throws Exception {
-        when(userRepository.findById(userTest.getId())).thenReturn(Optional.ofNullable(userTest));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(userTest));
         when(accountRespository.findById(anyLong())).thenReturn(Optional.ofNullable(accountTest));
         when(transactionRepository.save(any(Transaction.class))).thenReturn(transaction);
 
@@ -119,8 +125,9 @@ class TransactionServiceTest {
     }
 
     @Test
+    @WithMockUser
     void createDespositWithoutAmount() throws Exception {
-        when(userRepository.findById(userTest.getId())).thenReturn(Optional.ofNullable(userTest));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.ofNullable(userTest));
         when(accountRespository.findById(anyLong())).thenReturn(Optional.ofNullable(accountTest));
         when(transactionRepository.save(any(Transaction.class))).thenReturn(transaction);
 

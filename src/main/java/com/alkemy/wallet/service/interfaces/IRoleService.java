@@ -6,7 +6,7 @@ import com.alkemy.wallet.model.Role;
 
 public interface IRoleService {
 
-    RoleDto findByName(RoleName roleUser);
+    Role findByName(RoleName roleUser);
 
     Role createRole(Role role);
 }

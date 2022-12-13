@@ -21,7 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +34,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.is;
@@ -44,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ContextConfiguration
+@ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
 class AccountControllerTest {
 
@@ -69,6 +74,8 @@ class AccountControllerTest {
     private MockMvc mockMvc;
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private MessageSource messageSource;
 
     @BeforeEach
     void setup() {
@@ -95,7 +102,7 @@ class AccountControllerTest {
                 .transactionLimit(300000D)
                 .creationDate(new Date())
                 .user(user)
-                .currency(Currency.ARS)
+                .currency(Currency.ars)
                 .build();
 
         accountUsd = Account.builder()
@@ -104,7 +111,7 @@ class AccountControllerTest {
                 .transactionLimit(1000D)
                 .creationDate(new Date())
                 .user(user)
-                .currency(Currency.USD)
+                .currency(Currency.usd)
                 .build();
 
         fixedTermArs = FixedTermDeposit.builder()
@@ -139,6 +146,7 @@ class AccountControllerTest {
 
 
     @Test
+    @WithMockUser
     void when_getBalance_successfully() throws Exception {
 
         when(userRepository.findByEmail(anyString())).thenReturn(user);
@@ -175,6 +183,7 @@ class AccountControllerTest {
     }
 
     @Test
+    @WithMockUser
     void when_getBalance_fails_withUserIsNotFound() throws Exception {
         token = jwtUtil.create("fake@user.com");
 
@@ -190,12 +199,13 @@ class AccountControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof UserNotLoggedException))
-                .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
-                        "User not logged"));
+                .andExpect(result -> assertEquals("User not logged",
+                        result.getResolvedException().getMessage()));
 
     }
 
     @Test
+    @WithMockUser
     void updateAccountController_successfully() throws Exception {
 
         Account updatedAccountArs = Account.builder()
@@ -204,7 +214,7 @@ class AccountControllerTest {
                 .transactionLimit(400000D)
                 .creationDate(new Date())
                 .user(user)
-                .currency(Currency.ARS)
+                .currency(Currency.ars)
                 .build();
         AccountUpdateDto newTransactionLimit = new AccountUpdateDto(400000D);
 
@@ -229,6 +239,7 @@ class AccountControllerTest {
     }
 
     @Test
+    @WithMockUser
     void updateAccountController_fails_whenAccountDoesNotBelongToUserLogged() throws Exception {
 
         AccountUpdateDto newTransactionLimit = new AccountUpdateDto(400000D);
@@ -247,6 +258,6 @@ class AccountControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException))
                 .andExpect(result -> assertEquals(result.getResolvedException().getMessage(),
-                        "Account with id  " + anotherId + " does not belong to this user"));
+                        messageSource.getMessage("account.notfound.foruser.exception", new Object[]{anotherId}, Locale.ENGLISH)));
     }
 }

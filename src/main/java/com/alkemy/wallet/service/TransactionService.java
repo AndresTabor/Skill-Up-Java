@@ -172,7 +172,7 @@ public class TransactionService implements ITransactionService {
 
     @Override
     public boolean checkTransactionAmount(Double amount) {
-        if (amount < 0) {
+        if (amount <= 0) {
             throw new NoAmountException(messageSource
                     .getMessage("amount.exception", null, Locale.ENGLISH));
         }

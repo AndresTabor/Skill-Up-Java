@@ -1,6 +1,6 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.controller.AuthController;
+import com.alkemy.wallet.controller.TransactionsController;
 import com.alkemy.wallet.dto.AccountDto;
 import com.alkemy.wallet.dto.TransactionDto;
 import com.alkemy.wallet.mapper.Mapper;
@@ -27,6 +27,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -40,14 +41,14 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
-@Import({ObjectMapper.class, AuthController.class})
-@TestPropertySource(locations = "classpath:applicationtest.properties")
+@Import({ObjectMapper.class, TransactionsController.class})
+@ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.properties")
 class TransactionSendArsTest {
 
     @Autowired
@@ -87,7 +88,7 @@ class TransactionSendArsTest {
     private List<Account> accountsTest;
 
 
-    private final String token = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NzA3MTE2NDAsInN1YiI6InZpY3RvcmlvLnNhcm5hZ2xpYUBnbWFpbC5jb20iLCJpc3MiOiJNYWluIiwiZXhwIjoxNjcxMzE2NDQwfQ.q3fFXiarnJo1FqBg4_WbzCDvui3BSdITmIYrzhCBw44";
+    private final String token = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NzA4Njc3NTMsInN1YiI6InZpY3RvcmlvLnNhcm5hZ2xpYUBnbWFpbC5jb20iLCJpc3MiOiJNYWluIiwiZXhwIjoxNjcxNDcyNTUzfQ.-LQO6GnpJu7IPij-U6np15gVzT5sRQWQ1y_IeelcrCU";
 
 
     @BeforeEach
@@ -112,14 +113,14 @@ class TransactionSendArsTest {
                 .id(1L)
                 .balance(3000.)
                 .user(userTest)
-                .currency(Currency.ARS)
+                .currency(Currency.ars)
                 .transactionLimit(3000.).build();
 
         receivingAccountTest = Account.builder()
                 .id(2L)
                 .balance(3000.)
                 .user(userTest2)
-                .currency(Currency.ARS)
+                .currency(Currency.ars)
                 .transactionLimit(3000.).build();
 
         accountsTest = new ArrayList<>();
@@ -138,7 +139,7 @@ class TransactionSendArsTest {
         when(transactionRepository.save(any(Transaction.class))).thenReturn(transaction);
         when(userRepository.findByEmail(jwtUtil.getValue(token))).thenReturn(userTest);
         when(accountRespository.findAllByUser_Id(anyLong())).thenReturn(accountsTest);
-        when(accountService.getAccountByCurrency(userTest.getId(), Currency.ARS)).thenReturn(senderAccountTest);
+        when(accountService.getAccountByCurrency(userTest.getId(), Currency.ars)).thenReturn(senderAccountTest);
     }
 
     @Test
@@ -152,6 +153,7 @@ class TransactionSendArsTest {
     }
 
     @Test
+    @WithMockUser
     void createTransactionsArsWithoutAuthorization() throws Exception
     {
         mockMvc.perform(MockMvcRequestBuilders.post("/transactions/sendArs")

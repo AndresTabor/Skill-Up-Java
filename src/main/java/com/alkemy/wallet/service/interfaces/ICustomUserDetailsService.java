@@ -22,7 +22,7 @@ public interface ICustomUserDetailsService {
 
     ResponseUserDto findByEmail(String email);
 
-    ResponseUserDto save(RequestUserDto requestUserDto);
+    ResponseUserDto save(RequestUserDto requestUserDto) throws SQLIntegrityConstraintViolationException;
 
     @Transactional
     Page<ResponseUserDto> findAllUsersPageable(int page) throws Exception;
@@ -30,5 +30,7 @@ public interface ICustomUserDetailsService {
     ResponseUserDto getUserAuthenticated();
 
     ResponseUserDto getUserLoggedById(Long id);
+
+    
 
 }

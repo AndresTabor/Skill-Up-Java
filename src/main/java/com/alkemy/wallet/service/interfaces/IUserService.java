@@ -8,4 +8,6 @@ public interface IUserService {
 
     User findLoggedUser(String token);
 
+    void softDelete(String token, Long id);
+
 }

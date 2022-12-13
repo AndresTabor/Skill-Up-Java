@@ -1,6 +1,7 @@
 package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.RoleDto;
+import com.alkemy.wallet.exception.ResourceFoundException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.listing.RoleName;
 import com.alkemy.wallet.mapper.Mapper;
@@ -28,10 +29,10 @@ public class RoleService implements IRoleService {
 
 
     @Override
-    public RoleDto findByName(RoleName roleName) {
-        Optional<Role> user = roleRepository.findByName(roleName);
-        if (user.isPresent()) {
-            return mapper.getMapper().map(user, RoleDto.class);
+    public Role findByName(RoleName roleName) {
+        Role role = roleRepository.findByName(roleName);
+        if (role != null ) {
+            return role;
         }
         throw new ResourceNotFoundException(messageSource.getMessage("rolename.notfound.exception",
                 new Object[]{roleName}, Locale.ENGLISH));
@@ -39,6 +40,9 @@ public class RoleService implements IRoleService {
 
     @Override
     public Role createRole(Role role) {
+        if (roleRepository.existsByName(role.getName())) {
+            throw new ResourceFoundException("Role already exists");
+        }
         return roleRepository.save(role);
     }
 

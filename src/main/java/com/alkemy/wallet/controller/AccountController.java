@@ -111,7 +111,7 @@ public class AccountController {
     public ResponseEntity<?> postAccount(@RequestHeader(name = "Authorization") String token,
                                          @Parameter(name = "Currency, transaction limit, balance and owner's id ",
                                                  required = true)
-                                         @RequestBody BasicAccountDto basicAccountDto) {
+                                         @Valid @RequestBody BasicAccountDto basicAccountDto) {
         return accountService.postAccount(basicAccountDto, token);
     }
 
