@@ -11,20 +11,20 @@ import javax.validation.constraints.NotEmpty;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class RequestUserDto {
 
-    @NotEmpty(message = "First name shouldn't be null or empty")
+    @NotEmpty(message = "{firstname.notnull}")
     private String firstName;
 
-    @NotEmpty(message = "Last name shouldn't be null or empty")
+    @NotEmpty(message = "{lastname.notnull}")
     private String lastName;
 
-    @Email(message = "Email must be a real email")
+    @Email(message = "{email.notnull}")
     private String email;
 
-    @NotEmpty(message = "Password shouldn't be null or empty")
+    @NotEmpty(message = "{password.notnull}")
     private String password;
 
 }

@@ -1,16 +1,13 @@
-
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.model.enums.Currency;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotNull;
 
 @Data
-@RequiredArgsConstructor
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class BasicAccountDto {
 

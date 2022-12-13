@@ -10,7 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Hidden
 @Component
-public class AccountModelAssembler extends RepresentationModelAssemblerSupport<AccountDto, AccountModel> {
+public class AccountModelAssembler
+        extends RepresentationModelAssemblerSupport<AccountDto, AccountModel> {
 
     public AccountModelAssembler() {
         super(AccountController.class, AccountModel.class);

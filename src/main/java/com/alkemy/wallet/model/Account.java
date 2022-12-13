@@ -1,8 +1,10 @@
 package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.model.enums.Currency;
-import io.swagger.v3.oas.annotations.Hidden;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -23,20 +25,16 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotNull(message = "{currency.notnull}")
     @Column(name = "currency")
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    @NotNull
-    @Getter
-    @Setter
+    @NotNull(message = "{transactionlimit.notnull}")
     @Column(name = "transaction_limit", nullable = false)
     private Double transactionLimit;
 
-    @NotNull
-    @Getter
-    @Setter
+    @NotNull(message = "{balance.notnull}")
     @Column(name = "balance")
     private Double balance;
 
@@ -44,15 +42,15 @@ public class Account {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name = "CREATION_DATE")
+    @Column(name = "creation_date")
     @CreationTimestamp
     private Date creationDate;
 
-    @Column(name = "UPDATE_DATE")
+    @Column(name = "update_date")
     @UpdateTimestamp
     private Date updateDate;
 
-    @NotNull
+    @NotNull(message = "{softdelete.notnull}")
     @Column(name = "soft_delete", nullable = false)
     private boolean softDelete;
 

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RestController
 @RequestMapping("/auth")
@@ -48,8 +49,9 @@ public class AuthController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseUserDto.class))}),
             @ApiResponse(responseCode = "409", description = "Failed to register due to 'Email already in use'", content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400", description = "Failed to register due to 'Not-nullable field null or empty'",
+
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RequestUserDto.class))})})
-    public ResponseEntity<ResponseUserDto> signUp(@Valid @RequestBody RequestUserDto requestUserDto) {
+    public ResponseEntity<ResponseUserDto> signUp(@Valid @RequestBody RequestUserDto requestUserDto) throws SQLIntegrityConstraintViolationException {
         ResponseUserDto userSaved = customUserDetailsService.save(requestUserDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(userSaved);
     }

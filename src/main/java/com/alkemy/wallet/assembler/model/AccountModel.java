@@ -1,7 +1,8 @@
 package com.alkemy.wallet.assembler.model;
 
-import com.alkemy.wallet.dto.BasicAccountDto;
 import com.alkemy.wallet.model.enums.Currency;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import com.alkemy.wallet.model.enums.TypeOfTransaction;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import org.springframework.hateoas.RepresentationModel;
 @Hidden
 @Setter
 @Getter
+@Data
 public class AccountModel extends RepresentationModel<AccountModel>  {
 
     private Long id;

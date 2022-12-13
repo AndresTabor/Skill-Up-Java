@@ -1,5 +1,6 @@
 package com.alkemy.wallet.dto;
 
+import com.alkemy.wallet.model.enums.TypeOfTransaction;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Data;
 
@@ -13,6 +14,8 @@ public class ResponseTransactionDto {
     private Double amount;
 
     private Date transactionDate;
+
+    private TypeOfTransaction type;
 
     private String description;
 

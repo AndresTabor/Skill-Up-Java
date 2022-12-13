@@ -51,11 +51,12 @@ public class UserController {
         @ApiResponse(responseCode = "403", description = "Access denied",
                 content = {
                     @Content(mediaType = "application/json")})})
+
     public ResponseEntity<ResponseUserDto> updateUser(@RequestBody RequestUserDto requestUserDto) {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(customUserDetailsService.update(requestUserDto));
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
     @GetMapping("/{id}")
     @Operation(summary = "User logged details",
             description = "Provides user logged details to verify",
@@ -76,7 +77,7 @@ public class UserController {
         return ResponseEntity.ok().body(customUserDetailsService.getUserLoggedById(id));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @GetMapping
     @Operation(summary = "Paged user list",
             description = "Provides a paged user list to be verified by administrators",

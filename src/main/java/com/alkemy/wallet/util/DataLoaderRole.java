@@ -2,22 +2,35 @@ package com.alkemy.wallet.util;
 
 import com.alkemy.wallet.listing.RoleName;
 import com.alkemy.wallet.model.Role;
+import com.alkemy.wallet.repository.IUserRepository;
+import com.alkemy.wallet.service.CustomUserDetailsService;
 import com.alkemy.wallet.service.interfaces.IRoleService;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Hidden
 @Component
+@Profile("test")
 public class DataLoaderRole implements CommandLineRunner {
 
     @Autowired
     private IRoleService roleService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CustomUserDetailsService userService;
+
+    @Autowired
+    private IUserRepository userRepository;
+
     @Override
     public void run(String... args) throws Exception {
-
         Role role;
         role = Role.builder()
                 .name(RoleName.ROLE_ADMIN).build();
@@ -26,6 +39,5 @@ public class DataLoaderRole implements CommandLineRunner {
         role = Role.builder()
                 .name(RoleName.ROLE_USER).build();
         roleService.createRole(role);
-
     }
 }

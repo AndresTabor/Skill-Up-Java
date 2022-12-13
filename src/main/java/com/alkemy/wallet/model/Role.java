@@ -1,14 +1,13 @@
 package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.listing.RoleName;
-import com.sun.istack.NotNull;
-import io.swagger.v3.oas.annotations.Hidden;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Getter
@@ -25,20 +24,20 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Column(name = "NAME")
+    @NotNull(message = "{rolename.notnull}")
+    @Column(name = "name")
     @Enumerated(EnumType.STRING)
     private RoleName name;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "description")
     @Nullable
     private String description;
 
-    @Column(name = "CREATION_DATE")
+    @Column(name = "creation_date")
     @CreationTimestamp
     private Date creationDate;
 
-    @Column(name = "UPDATE_DATE")
+    @Column(name = "update_date")
     @UpdateTimestamp
     private Date updateDate;
 

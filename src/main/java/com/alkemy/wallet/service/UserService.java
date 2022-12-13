@@ -3,7 +3,6 @@ package com.alkemy.wallet.service;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.UserNotAllowed;
-import com.alkemy.wallet.exception.UserNotFound;
 import com.alkemy.wallet.exception.UserNotLoggedException;
 import com.alkemy.wallet.listing.RoleName;
 import com.alkemy.wallet.mapper.Mapper;
@@ -12,27 +11,32 @@ import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Hidden;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Objects;
-import java.util.Optional;
 
 @Hidden
 @Service
 public class UserService implements IUserService {
 
     private final IUserRepository userRepository;
-
     private final Mapper mapper;
-
     private final JwtUtil jwtUtil;
 
-    public UserService(IUserRepository userRepository, Mapper mapper, JwtUtil jwtUtil) {
+    private final MessageSource messageSource;
+
+    public UserService(IUserRepository userRepository,
+                       Mapper mapper,
+                       JwtUtil jwtUtil,
+                       MessageSource messageSource) {
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.jwtUtil = jwtUtil;
+        this.messageSource = messageSource;
     }
 
     @Override
@@ -40,26 +44,24 @@ public class UserService implements IUserService {
         if (jwtUtil.getValue(token) != null) {
             return true;
         }
-        throw new UserNotLoggedException("User not logged");
+        throw new UserNotLoggedException(messageSource.getMessage(
+                "user.notlogged.exception",
+                null,
+                Locale.ENGLISH));
     }
 
     @Override
     public User findLoggedUser(String token) {
         User user = userRepository.findByEmail(jwtUtil.getValue(token));
-        if (user != null) {
-            return user;
+        if (user == null) {
+            throw new UserNotLoggedException(messageSource.getMessage(
+                    "user.notlogged.exception",
+                    null,
+                    Locale.ENGLISH));
         }
-        throw new UserNotLoggedException("User not logged");
+        return user;
     }
 
-    @Override
-    public UserDto findByEmail(String email) throws ResourceNotFoundException {
-        Optional<User> user = userRepository.findOptionalByEmail(email);
-        if (user.isPresent()) {
-            return mapper.getMapper().map(user.get(), UserDto.class);
-        }
-        throw new ResourceNotFoundException("Email not found");
-    }
 
     @Override
     public ResponseEntity<?> softDelete(String token, Long id) {

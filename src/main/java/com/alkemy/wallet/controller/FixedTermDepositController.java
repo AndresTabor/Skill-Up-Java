@@ -34,7 +34,7 @@ public class FixedTermDepositController {
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
-    public ResponseEntity<FixedTermDto> createFixedDeposit (
+    public ResponseEntity<FixedTermDto> createFixedDeposit(
             @Parameter(name = "Fixed term deposit info",
                     required = true)
             @Valid @RequestBody FixedTermDto fixedTermDto,
@@ -44,18 +44,21 @@ public class FixedTermDepositController {
 
     @PostMapping("/fixedTermDeposit/simulate")
     @Operation(summary = "Simulate fixed term deposit",
+
             description = "Generates a simulation of a fixed term deposit with a defined ammount and interest",
             tags = "Fixed Term Deposit Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Fixed term deposit simulated",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = SimulatedFixedTermDto.class))}),
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SimulatedFixedTermDto.class))}),
             @ApiResponse(responseCode = "400", description = "Something went wrong",
                     content = {@Content(mediaType = "application/json")})})
-    public ResponseEntity<SimulatedFixedTermDto> simulateFixedDeposit (
+    public ResponseEntity<SimulatedFixedTermDto> simulateFixedDeposit(
             @Parameter(name = "Simulated fixed term deposit info",
                     required = true)
             @Valid @RequestBody SimulatedFixedTermDto fixedTermDto) {
-        return ResponseEntity.status(HttpStatus.OK).body(fixedTermService.simulateFixedTerm(fixedTermDto));
+        return ResponseEntity.status(HttpStatus.OK).
+                body(fixedTermService.simulateFixedTerm(fixedTermDto));
     }
 
 }

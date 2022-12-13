@@ -6,10 +6,9 @@ import lombok.*;
 import java.util.List;
 
 @Data
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
-@RequiredArgsConstructor
-@Getter
-@Setter
 public class BalanceDto {
 
     private Long id;

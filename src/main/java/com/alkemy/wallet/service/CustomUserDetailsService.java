@@ -1,11 +1,12 @@
 package com.alkemy.wallet.service;
 
+import com.alkemy.wallet.dto.AccountCreateDto;
 import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
+import com.alkemy.wallet.exception.ResourceFoundException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.listing.RoleName;
 import com.alkemy.wallet.mapper.Mapper;
-import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.model.enums.Currency;
@@ -55,20 +56,25 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     private AuthenticationManager authenticationManager;
 
     @Override
-    public ResponseUserDto save(@Valid RequestUserDto requestUserDto) {
+    public ResponseUserDto save(RequestUserDto requestUserDto) {
+
+        if (userRepository.existsByEmail(requestUserDto.getEmail())) {
+            throw new ResourceFoundException("User email already exists");
+        }
+
 
         User user = mapper.getMapper().map(requestUserDto, User.class);
         user.setPassword(passwordEncoder.encode(requestUserDto.getPassword()));
 
-        Role role = mapper.getMapper().map(roleService.findByName(RoleName.ROLE_USER), Role.class);
+        Role role = roleService.findByName(RoleName.ROLE_USER);
         user.setRole(role);
         user.setCreationDate(new Date());
         User userSaved = userRepository.save(user);
 
         String token = this.authenticated(requestUserDto);
 
-        accountService.createAccount(new Account(Currency.ars));
-        accountService.createAccount(new Account(Currency.usd));
+        accountService.createAccount(new AccountCreateDto(Currency.ars), token);
+        accountService.createAccount(new AccountCreateDto(Currency.usd), token);
 
         ResponseUserDto responseUserDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
         responseUserDto.setToken(token);
@@ -93,8 +99,8 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 
         String token = this.authenticated(requestUserDto);
 
-        accountService.createAccount(new Account(Currency.ars));
-        accountService.createAccount(new Account(Currency.usd));
+        accountService.createAccount(new AccountCreateDto(Currency.ars), token);
+        accountService.createAccount(new AccountCreateDto(Currency.usd), token);
 
         ResponseUserDto responseUserDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
         responseUserDto.setToken(token);
@@ -168,7 +174,7 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 
             return userPage;
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
             throw new Exception(e.getMessage());
 

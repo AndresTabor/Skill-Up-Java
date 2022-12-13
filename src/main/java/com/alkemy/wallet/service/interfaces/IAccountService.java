@@ -14,7 +14,7 @@ import java.util.List;
 @Hidden
 public interface IAccountService {
 
-    BasicAccountDto createAccount(Account account);
+    BasicAccountDto createAccount(AccountCreateDto accountCreateDto, String token);
 
     List<Account> getAccountsByUserId(Long userId);
 

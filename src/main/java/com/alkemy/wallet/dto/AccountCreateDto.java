@@ -1,5 +1,6 @@
 package com.alkemy.wallet.dto;
 
+import com.alkemy.wallet.model.enums.Currency;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +12,8 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccountUpdateDto {
+public class AccountCreateDto {
 
-    @NotNull(message = "{transactionlimit.notnull")
-    private Double transactionLimit;
+    @NotNull(message = "{currency.notnull")
+    private Currency currency;
 }
-
