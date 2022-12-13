@@ -38,7 +38,7 @@ public class UserController {
     @PatchMapping("/{id}")
     @Operation(summary = "Update user",
             description = "Provide user logged details to update",
-            tags = "Patch",
+            tags = "User Controller",
             parameters = @Parameter(name = "Request user dto",
                     description = "First name, last name, email and password to update user"))
     @ApiResponses(value = {
@@ -59,7 +59,7 @@ public class UserController {
     @GetMapping("/{id}")
     @Operation(summary = "User logged details",
             description = "Provides user logged details to verify",
-            tags = "Get",
+            tags = "User Controller",
             parameters = @Parameter(name = "User id",
                     description = "Current logged user´s id"))
     @ApiResponses(value = {
@@ -80,7 +80,7 @@ public class UserController {
     @GetMapping
     @Operation(summary = "Paged user list",
             description = "Provides a paged user list to be verified by administrators",
-            tags = "Get")
+            tags = "User Controller")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Users found",
                 content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseUserDto.class))}),
@@ -102,7 +102,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete user",
             description = "Deletes the targeted user",
-            tags = "Delete",
+            tags = "User Controller",
             parameters = @Parameter(name = "User id",
                     description = "Targeted user´s id"))
     @ApiResponses(value = {

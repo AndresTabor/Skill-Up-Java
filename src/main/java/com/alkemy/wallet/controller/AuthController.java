@@ -40,7 +40,7 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Register a new user",
             description = "Provide user's details to register him",
-            tags = "Post",
+            tags = "Authorization Controller",
             parameters = @Parameter(name = "Request user dto",
                     description = "Email, first name, last name and password to register user"))
     @ApiResponses(value = {
@@ -57,7 +57,7 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Log in",
             description = "Provide user's email and password to log in",
-            tags = "Post",
+            tags = "Authorization Controller",
             parameters = @Parameter(name = "Login user dto",
                     description = "Email and password to sign in"))
     @ApiResponses(value = {
@@ -76,7 +76,7 @@ public class AuthController {
     @GetMapping("/logout")
     @Operation(summary = "Log out",
             description = "Ends user session with security context",
-            tags = "Get")
+            tags = "Authorization Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully Logged out",
                     content = {@Content(mediaType = "application/json")}),

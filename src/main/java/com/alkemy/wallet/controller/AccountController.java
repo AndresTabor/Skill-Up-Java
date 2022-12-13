@@ -62,7 +62,7 @@ public class AccountController {
     @GetMapping("/{userId}")
     @Operation(summary = "Get user's accounts",
             description = "Provides a list of the user's accounts",
-            tags = "Get",
+            tags = "Account Controller",
             parameters = @Parameter(name = "User´s id",
                     description = "Indicate account owner's id"))
     @ApiResponses(value = {
@@ -81,7 +81,7 @@ public class AccountController {
     @GetMapping
     @Operation(summary = "Paged transactions list",
             description = "Provides a paged transactions list to be verified by the user",
-            tags = "Get")
+            tags = "Account Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transactions found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AccountModel.class))}),
@@ -101,7 +101,7 @@ public class AccountController {
     @PostMapping
     @Operation(summary = "Create account",
             description = "Create a new account",
-            tags = "Post",
+            tags = "Account Controller",
             parameters = @Parameter(name = "Account info",
                     description = "Currency, transaction limit, balance and owner's id"))
     @ApiResponses(value = {
@@ -121,7 +121,7 @@ public class AccountController {
     @PatchMapping("/{id}")
     @Operation(summary = "Update account",
             description = "Update an existent account",
-            tags = "Patch",
+            tags = "Account Controller",
             parameters = {@Parameter(name = "Account's id",
                     description = "Indicate accout's id in order to find it"),
                     @Parameter(name = "New transaction limit",
@@ -146,7 +146,7 @@ public class AccountController {
     @GetMapping("/balance")
     @Operation(summary = "Get balance",
             description = "Provides user's accounts balances",
-            tags = "Get")
+            tags = "Account Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Balances found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BalanceDto.class))}),
