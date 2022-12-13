@@ -11,7 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @Import({ObjectMapper.class, UserController.class})
+@TestPropertySource(locations = "classpath:application-test.properties")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class UserControllerTest {
 
@@ -41,7 +42,6 @@ class UserControllerTest {
 
 
     @Test
-    @WithMockUser
     @Order(1)
     void updateUser() throws Exception {
         RequestUserDto requestUserDto = RequestUserDto.builder()
@@ -62,7 +62,7 @@ class UserControllerTest {
                 .email("test@test.com")
                 .password("test").build();
 
-        mockMvc.perform(MockMvcRequestBuilders.patch("/users/1")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/users/22")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedUser)))
@@ -73,10 +73,10 @@ class UserControllerTest {
     }
 
     @Test
-    @WithMockUser(username="test@test.com",password="test")
+    @WithUserDetails(value="test@test.com")
     @Order(2)
     void getUserLoggedDetails() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/1")
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/22")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
