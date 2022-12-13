@@ -52,7 +52,7 @@ public class TransactionsController {
     @GetMapping("/transactions/{userId}")
     @Operation(summary = "Get user's transactions",
             description = "Provides a list of the user's transactions",
-            tags = "Get",
+            tags = "Transaction Controller",
             parameters = @Parameter(name = "User´s id",
                     description = "Indicate the user's id in order to find his transactions"))
     @ApiResponses(value = {
@@ -69,7 +69,7 @@ public class TransactionsController {
     @GetMapping("/transaction/{id}")
     @Operation(summary = "Get transaction",
             description = "Provides an specific transaction",
-            tags = "Get",
+            tags = "Transaction Controller",
             parameters = @Parameter(name = "Transaction´s id",
                     description = "Indicate transaction id in order to find it"))
     @ApiResponses(value = {
@@ -91,7 +91,7 @@ public class TransactionsController {
     @PatchMapping("/transactions/{id}")
     @Operation(summary = "Update a transaction",
             description = "Update an existent transaction",
-            tags = "Patch",
+            tags = "Transaction Controller",
             parameters = {@Parameter(name = "Transaction´s id",
                     description = "Indicate transaction's id in order to find it"),
                     @Parameter(name = "Transaction's description",
@@ -116,7 +116,7 @@ public class TransactionsController {
     @GetMapping("/transactions/page/{id}")
     @Operation(summary = "Get user's transactions",
             description = "Provides a paged list of the user's transactions",
-            tags = "Get",
+            tags = "Transaction Controller",
             parameters = @Parameter(name = "User´s id",
                     description = "Indicate user's id in order to find his transactions"))
     @ApiResponses(value = {
@@ -143,7 +143,7 @@ public class TransactionsController {
     @PostMapping("/transactions/sendUsd")
     @Operation(summary = "Send USD",
             description = "Generates a transaction in USD from a logged user",
-            tags = "Post",
+            tags = "Transaction Controller",
             parameters = @Parameter(name = "TransactionDto",
                     description = "Transaction info and destined account"))
     @ApiResponses(value = {
@@ -163,7 +163,7 @@ public class TransactionsController {
     @PostMapping("/transactions/sendArs")
     @Operation(summary = "Send ARS",
             description = "Generates a transaction in ARS from a logged user",
-            tags = "Post",
+            tags = "Transaction Controller",
             parameters = @Parameter(name = "TransactionDto",
                     description = "Transaction info and destined account"))
     @ApiResponses(value = {
@@ -183,7 +183,7 @@ public class TransactionsController {
     @PostMapping("/transactions/deposit")
     @Operation(summary = "Create deposit",
             description = "Generates a deposit",
-            tags = "Post",
+            tags = "Transaction Controller",
             parameters = @Parameter(name = "Deposit info",
                     description = "Indicate deposit info in order to execute it"))
     @ApiResponses(value = {
@@ -200,7 +200,7 @@ public class TransactionsController {
     @PostMapping("/transactions/payment")
     @Operation(summary = "Pay",
             description = "Generates a payment",
-            tags = "Post",
+            tags = "Transaction Controller",
             parameters = @Parameter(name = "Payment info",
                     description = "Indicate payment info in order to execute it"))
     @ApiResponses(value = {
