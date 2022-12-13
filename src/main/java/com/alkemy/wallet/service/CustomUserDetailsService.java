@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,9 +60,17 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     public ResponseUserDto save(RequestUserDto requestUserDto) {
 
         if (userRepository.existsByEmail(requestUserDto.getEmail())) {
-            throw new ResourceFoundException("User email already exists");
-        }
+            if (!userRepository.findByEmail(requestUserDto.getEmail()).isSoftDelete()) {
+                throw new ResourceFoundException("User email already exists");
+            }
+            User user = userRepository.findByEmail(requestUserDto.getEmail());
+            user.setSoftDelete(false);
+            String token = this.authenticated(requestUserDto);
+            ResponseUserDto responseUserDto = mapper.getMapper().map(userRepository.save(user), ResponseUserDto.class);
+            responseUserDto.setToken(token);
+            return responseUserDto;
 
+        }
 
         User user = mapper.getMapper().map(requestUserDto, User.class);
         user.setPassword(passwordEncoder.encode(requestUserDto.getPassword()));
