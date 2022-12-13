@@ -51,9 +51,8 @@ public class UserController {
         @ApiResponse(responseCode = "403", description = "Access denied",
                 content = {
                     @Content(mediaType = "application/json")})})
-
-    public ResponseEntity<ResponseUserDto> updateUser(@RequestBody RequestUserDto requestUserDto) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(customUserDetailsService.update(requestUserDto));
+    public ResponseEntity<ResponseUserDto> updateUser(@PathVariable Long id, @RequestBody RequestUserDto requestUserDto) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(customUserDetailsService.update(id, requestUserDto));
     }
 
     @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")

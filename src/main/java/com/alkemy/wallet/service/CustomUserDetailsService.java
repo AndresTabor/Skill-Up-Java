@@ -14,13 +14,13 @@ import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.ICustomUserDetailsService;
 import com.alkemy.wallet.service.interfaces.IRoleService;
+import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -49,6 +49,8 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     private IUserRepository userRepository;
     @Autowired
     private IRoleService roleService;
+    @Autowired
+    private IUserService userService;
     @Autowired
     private IAccountService accountService;
     @Autowired
@@ -128,10 +130,10 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     }
 
     @Override
-    public ResponseUserDto update(@Valid RequestUserDto requestUserDto) {
+    public ResponseUserDto update(Long id, @Valid RequestUserDto requestUserDto) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (!(Objects.equals(userRepository.findByEmail(auth.getName()).getId(), userRepository.findByEmail(requestUserDto.getEmail()).getId()))) {
+        if (!(userRepository.findByEmail(auth.getName()).getId() == id)) {
             throw new AccessDeniedException("You can not modify another user´s details");
         }
         User user = userRepository.findByEmail(requestUserDto.getEmail());
