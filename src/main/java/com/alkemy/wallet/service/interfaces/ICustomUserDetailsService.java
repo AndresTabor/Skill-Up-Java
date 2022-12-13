@@ -20,7 +20,7 @@ public interface ICustomUserDetailsService {
 
     ResponseUserDto saveAdmin(@Valid RequestUserDto requestUserDto) throws SQLIntegrityConstraintViolationException;
 
-    ResponseUserDto update(RequestUserDto requestUserDto) throws ResourceNotFoundException;
+    ResponseUserDto update(Long id, RequestUserDto requestUserDto) throws ResourceNotFoundException;
 
     ResponseUserDto findByEmail(String email);
 

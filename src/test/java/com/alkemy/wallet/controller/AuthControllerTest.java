@@ -30,7 +30,6 @@ import java.util.Date;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -51,30 +50,33 @@ class AuthControllerTest {
 
     @Autowired
     IRoleService roleService;
+
     User user;
 
-//    @MockBean
-//    DataLoaderUser dataLoaderUser;
     Role role;
+
     Account accountArs;
+
     Account accountUsd;
+
     RequestUserDto requestUserDto;
+
     String token;
+
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+
     @Autowired
     private JwtUtil jwtUtil;
+
     @Autowired
     private AuthenticationManager authenticationManager;
+
     @Autowired
     private ObjectMapper objectMapper;
-
-    @BeforeAll
-    static void init() {
-
-    }
 
     @BeforeEach
     void setup() {
@@ -87,9 +89,6 @@ class AuthControllerTest {
                 .creationDate(new Date())
                 .role(role)
                 .build();
-
-
-
     }
 
     @DisplayName("Signing up success")
