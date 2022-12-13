@@ -1,5 +1,6 @@
 package com.alkemy.wallet.repository;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +12,7 @@ import com.alkemy.wallet.model.User;
 import java.util.List;
 import java.util.Optional;
 
+@Hidden
 @Repository
 public interface IUserRepository extends PagingAndSortingRepository<User, Long>, JpaRepository<User, Long> {
 

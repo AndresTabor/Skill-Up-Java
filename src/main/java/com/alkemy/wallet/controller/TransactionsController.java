@@ -53,7 +53,9 @@ public class TransactionsController {
     @GetMapping("/transactions/{userId}")
     @Operation(summary = "Get user's transactions",
             description = "Provides a list of the user's transactions",
-            tags = "Get")
+            tags = "Transaction Controller",
+            parameters = @Parameter(name = "User´s id",
+                    description = "Indicate the user's id in order to find his transactions"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Accounts found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
@@ -61,17 +63,21 @@ public class TransactionsController {
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
+
     public HashSet<ResponseTransactionDto> getTransactions(
             @Parameter(name = "User´s id",
                     required = true)
             @PathVariable("userId") Long userId) {
+
         return transactionService.getByUserId(accountService.getAccountsByUserId(userId));
     }
 
     @GetMapping("/transaction/{id}")
     @Operation(summary = "Get transaction",
             description = "Provides an specific transaction",
-            tags = "Get")
+            tags = "Transaction Controller",
+            parameters = @Parameter(name = "Transaction´s id",
+                    description = "Indicate transaction id in order to find it"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
@@ -80,9 +86,10 @@ public class TransactionsController {
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<?> getTransaction(
-            @Parameter(name = "Transaction´s id",
-                    required = true)
             @PathVariable Long id,
+            @Parameter(name = "Token",
+                    required = true,
+                    hidden = true)
             @RequestHeader(name = "Authorization") String token) {
         return transactionService.getTransaction(id, token);
     }
@@ -90,7 +97,11 @@ public class TransactionsController {
     @PatchMapping("/transactions/{id}")
     @Operation(summary = "Update a transaction",
             description = "Update an existent transaction",
-            tags = "Patch")
+            tags = "Transaction Controller",
+            parameters = {@Parameter(name = "Transaction´s id",
+                    description = "Indicate transaction's id in order to find it"),
+                    @Parameter(name = "Transaction's description",
+                            description = "Indicate transaction's description in order to update it")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction updated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
@@ -99,12 +110,11 @@ public class TransactionsController {
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<?> patchTransaction(
-            @Parameter(name = "Transaction´s id",
-                    required = true)
             @PathVariable("id") Long id,
+            @Parameter(name = "Token",
+                    required = true,
+                    hidden = true)
             @RequestHeader(name = "Authorization") String token,
-            @Parameter(name = "Transaction's description",
-                    required = true)
             @RequestBody String description) {
         return transactionService.patchTransaction(id, token, description);
     }
@@ -112,7 +122,9 @@ public class TransactionsController {
     @GetMapping("/transactions/page/{id}")
     @Operation(summary = "Get user's transactions",
             description = "Provides a paged list of the user's transactions",
-            tags = "Get")
+            tags = "Transaction Controller",
+            parameters = @Parameter(name = "User´s id",
+                    description = "Indicate user's id in order to find his transactions"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction updated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
@@ -121,10 +133,11 @@ public class TransactionsController {
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<PagedModel<TransactionModel>> getTransactionPage(
-            @Parameter(name = "User´s id",
-                    required = true)
             @PathVariable("id") Long userId,
             @RequestParam(defaultValue = "0") int page,
+            @Parameter(name = "Token",
+                    required = true,
+                    hidden = true)
             @RequestHeader("Authorization") String token) {
         Page<ResponseTransactionDto> transactions = transactionService.findAllTransactionsByUserIdPageable(userId, page, token);
 
@@ -136,41 +149,59 @@ public class TransactionsController {
     @PostMapping("/transactions/sendUsd")
     @Operation(summary = "Send USD",
             description = "Generates a transaction in USD from a logged user",
-            tags = "Post")
+            tags = "Transaction Controller",
+            parameters = @Parameter(name = "TransactionDto",
+                    description = "Transaction info and destined account"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction generated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RequestTransactionDto.class))}),
             @ApiResponse(responseCode = "400", description = "Something went wrong",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<Object> sendUsd(
+            @Parameter(name = "Token",
+                    required = true,
+                    hidden = true)
             @RequestHeader(name = "Authorization") String token,
+
             @Parameter(name = "Transaction info and destined account",
                     required = true)
             @RequestBody RequestTransactionDto destinedTransactionDto) {
+
+
         return transactionService.makeTransaction(token, destinedTransactionDto);
     }
 
     @PostMapping("/transactions/sendArs")
     @Operation(summary = "Send ARS",
             description = "Generates a transaction in ARS from a logged user",
-            tags = "Post")
+            tags = "Transaction Controller",
+            parameters = @Parameter(name = "TransactionDto",
+                    description = "Transaction info and destined account"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction generated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
             @ApiResponse(responseCode = "400", description = "Something went wrong",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<Object> sendArs(
+            @Parameter(name = "Token",
+                    required = true,
+                    hidden = true)
             @RequestHeader(name = "Authorization") String token,
+
             @Parameter(name = "Transaction info and destined account",
                     required = true)
             @RequestBody RequestTransactionDto destinedTransactionDto) {
+
+
         return transactionService.makeTransaction(token, destinedTransactionDto);
     }
 
     @PostMapping("/transactions/deposit")
     @Operation(summary = "Create deposit",
             description = "Generates a deposit",
-            tags = "Post")
+            tags = "Transaction Controller",
+            parameters = @Parameter(name = "Deposit info",
+                    description = "Indicate deposit info in order to execute it"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Deposit generated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
@@ -178,17 +209,21 @@ public class TransactionsController {
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "403", description = "Limit exceeded",
                     content = {@Content(mediaType = "application/json")})})
+
     public ResponseEntity<?> postDeposit(
             @Parameter(name = "Deposit info",
                     required = true)
             @RequestBody RequestTransactionDto transactionDto) {
+
         return transactionService.createDeposit(transactionDto);
     }
 
     @PostMapping("/transactions/payment")
     @Operation(summary = "Pay",
             description = "Generates a payment",
-            tags = "Post")
+            tags = "Transaction Controller",
+            parameters = @Parameter(name = "Payment info",
+                    description = "Indicate payment info in order to execute it"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Payment generated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
@@ -196,10 +231,12 @@ public class TransactionsController {
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "403", description = "Limit exceeded",
                     content = {@Content(mediaType = "application/json")})})
+
     public ResponseEntity<?> postPayment(
             @Parameter(name = "Payment info",
                     required = true)
             @RequestBody RequestTransactionDto transactionDto) {
+
         return transactionService.createPayment(transactionDto);
     }
 }

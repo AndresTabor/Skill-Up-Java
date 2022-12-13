@@ -7,11 +7,13 @@ import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.service.interfaces.IRoleService;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Hidden
 @Service
 public class RoleService implements IRoleService {
 

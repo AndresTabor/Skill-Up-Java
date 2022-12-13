@@ -40,18 +40,16 @@ public class AuthController {
     @PostMapping("/register")
     @Operation(summary = "Register a new user",
             description = "Provide user's details to register him",
-            tags = "Post")
+            tags = "Authorization Controller",
+            parameters = @Parameter(name = "Request user dto",
+                    description = "Email, first name, last name and password to register user"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully registered",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseUserDto.class))}),
             @ApiResponse(responseCode = "409", description = "Failed to register due to 'Email already in use'", content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "400", description = "Failed to register due to 'Not-nullable field null or empty'",
-                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RequestUserDto.class))})
-    })
-    public ResponseEntity<ResponseUserDto> signUp(
-            @Parameter(description = "Email, first name, last name and password to register user",
-                    required = true)
-            @Valid @RequestBody RequestUserDto requestUserDto) {
+                    content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RequestUserDto.class))})})
+    public ResponseEntity<ResponseUserDto> signUp(@Valid @RequestBody RequestUserDto requestUserDto) {
         ResponseUserDto userSaved = customUserDetailsService.save(requestUserDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(userSaved);
     }
@@ -59,16 +57,15 @@ public class AuthController {
     @PostMapping("/login")
     @Operation(summary = "Log in",
             description = "Provide user's email and password to log in",
-            tags = "Post")
+            tags = "Authorization Controller",
+            parameters = @Parameter(name = "Login user dto",
+                    description = "Email and password to sign in"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully Logged",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AuthToken.class))}),
             @ApiResponse(responseCode = "403", description = "Bad login attempt",
                     content = {@Content(mediaType = "application/json")})})
-    public ResponseEntity<AuthToken> signIn(
-            @Parameter(name = "Email and password to sign in",
-                    required = true)
-            @Valid @RequestBody LoginUserDto loginUser) throws AuthenticationException {
+    public ResponseEntity<AuthToken> signIn(@Valid @RequestBody LoginUserDto loginUser) throws AuthenticationException {
         final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginUser.getEmail(), loginUser.getPassword())
         );
@@ -79,7 +76,7 @@ public class AuthController {
     @GetMapping("/logout")
     @Operation(summary = "Log out",
             description = "Ends user session with security context",
-            tags = "Get")
+            tags = "Authorization Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully Logged out",
                     content = {@Content(mediaType = "application/json")}),
