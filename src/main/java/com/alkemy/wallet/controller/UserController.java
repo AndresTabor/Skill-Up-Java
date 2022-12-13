@@ -32,7 +32,7 @@ public class UserController {
     @Autowired
     private PagedResourcesAssembler<ResponseUserDto> pagedResourcesAssembler;
     @Autowired
-    private IUserService iUserService;
+    private IUserService userService;
 
     @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @PatchMapping("/{id}")
@@ -98,7 +98,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN','USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete user",
             description = "Deletes the targeted user",
@@ -112,17 +112,10 @@ public class UserController {
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
-    public ResponseEntity<Object> delete(
-            @Parameter(name = "Token",
-                    required = true,
-                    hidden = true)
+    public ResponseEntity<?> deleteUser(
             @RequestHeader(value = "Authorization") String token,
             @PathVariable Long id) {
-
-        iUserService.softDelete(token, id);
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
+        return userService.softDelete(token, id);
     }
 
 }

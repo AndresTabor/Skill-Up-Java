@@ -3,6 +3,7 @@ package com.alkemy.wallet.service.interfaces;
 import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.model.User;
 import io.swagger.v3.oas.annotations.Hidden;
+import org.springframework.http.ResponseEntity;
 
 @Hidden
 public interface IUserService {
@@ -11,8 +12,8 @@ public interface IUserService {
 
     User findLoggedUser(String token);
 
-    UserDto findByEmail(String email );
+    UserDto findByEmail(String email);
 
-    public void softDelete(String token,Long id);
-    
+    ResponseEntity<?> softDelete(String token, Long id);
+
 }
