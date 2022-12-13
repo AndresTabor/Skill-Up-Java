@@ -9,11 +9,8 @@ import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.ITransactionService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -57,7 +54,7 @@ public class TransactionsController {
             description = "Provides a list of the user's transactions",
             tags = "Get",
             parameters = @Parameter(name = "User´s id",
-                    required = true))
+                    description = "Indicate the user's id in order to find his transactions"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Accounts found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class))}),
@@ -74,7 +71,7 @@ public class TransactionsController {
             description = "Provides an specific transaction",
             tags = "Get",
             parameters = @Parameter(name = "Transaction´s id",
-                    required = true))
+                    description = "Indicate transaction id in order to find it"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class))}),
@@ -96,9 +93,9 @@ public class TransactionsController {
             description = "Update an existent transaction",
             tags = "Patch",
             parameters = {@Parameter(name = "Transaction´s id",
-                    required = true),
+                    description = "Indicate transaction's id in order to find it"),
                     @Parameter(name = "Transaction's description",
-                            required = true)})
+                            description = "Indicate transaction's description in order to update it")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction updated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class))}),
@@ -112,8 +109,6 @@ public class TransactionsController {
                     required = true,
                     hidden = true)
             @RequestHeader(name = "Authorization") String token,
-            @Parameter(name = "Transaction's description",
-                    required = true)
             @RequestBody String description) {
         return transactionService.patchTransaction(id, token, description);
     }
@@ -123,7 +118,7 @@ public class TransactionsController {
             description = "Provides a paged list of the user's transactions",
             tags = "Get",
             parameters = @Parameter(name = "User´s id",
-                    required = true))
+                    description = "Indicate user's id in order to find his transactions"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction updated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class))}),
@@ -150,8 +145,7 @@ public class TransactionsController {
             description = "Generates a transaction in USD from a logged user",
             tags = "Post",
             parameters = @Parameter(name = "TransactionDto",
-                    description = "Transaction info and destined account",
-                    required = true))
+                    description = "Transaction info and destined account"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction generated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class))}),
@@ -171,8 +165,7 @@ public class TransactionsController {
             description = "Generates a transaction in ARS from a logged user",
             tags = "Post",
             parameters = @Parameter(name = "TransactionDto",
-                    description = "Transaction info and destined account",
-                    required = true))
+                    description = "Transaction info and destined account"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction generated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class))}),
@@ -192,7 +185,7 @@ public class TransactionsController {
             description = "Generates a deposit",
             tags = "Post",
             parameters = @Parameter(name = "Deposit info",
-                    required = true))
+                    description = "Indicate deposit info in order to execute it"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Deposit generated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class))}),
@@ -209,7 +202,7 @@ public class TransactionsController {
             description = "Generates a payment",
             tags = "Post",
             parameters = @Parameter(name = "Payment info",
-                    required = true))
+                    description = "Indicate payment info in order to execute it"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Payment generated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = TransactionDto.class))}),

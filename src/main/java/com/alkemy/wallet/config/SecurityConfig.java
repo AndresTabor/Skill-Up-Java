@@ -27,12 +27,9 @@ public class SecurityConfig {
                 .authorizeRequests(auth -> {
                     auth
                             .antMatchers("/api/**", "/swagger-ui/**", "/javainuse-openapi/**",
-                                    "/auth/**", "/fixedTermDeposit/simulate").permitAll()
-                            .anyRequest().authenticated();
+                                    "/auth/**", "/fixedTermDeposit/simulate").permitAll();
 
                 })
-                .httpBasic()
-                .and()
                 //.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

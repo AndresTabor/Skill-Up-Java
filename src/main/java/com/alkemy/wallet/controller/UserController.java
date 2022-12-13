@@ -40,8 +40,7 @@ public class UserController {
             description = "Provide user logged details to update",
             tags = "Patch",
             parameters = @Parameter(name = "Request user dto",
-                    description = "First name, last name, email and password to update user",
-                    required = true))
+                    description = "First name, last name, email and password to update user"))
     @ApiResponses(value = {
         @ApiResponse(responseCode = "202", description = "Successfully Logged",
                 content = {
@@ -62,8 +61,7 @@ public class UserController {
             description = "Provides user logged details to verify",
             tags = "Get",
             parameters = @Parameter(name = "User id",
-                    description = "Current logged user´s id",
-                    required = true))
+                    description = "Current logged user´s id"))
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "User details found",
                 content = {
@@ -106,8 +104,7 @@ public class UserController {
             description = "Deletes the targeted user",
             tags = "Delete",
             parameters = @Parameter(name = "User id",
-                    description = "Targeted user´s id",
-                    required = true))
+                    description = "Targeted user´s id"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User deleted",
                     content = {@Content(mediaType = "application/json")}),

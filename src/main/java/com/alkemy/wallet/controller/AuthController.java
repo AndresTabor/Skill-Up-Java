@@ -42,8 +42,7 @@ public class AuthController {
             description = "Provide user's details to register him",
             tags = "Post",
             parameters = @Parameter(name = "Request user dto",
-                    description = "Email, first name, last name and password to register user",
-                    required = true))
+                    description = "Email, first name, last name and password to register user"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully registered",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseUserDto.class))}),
@@ -60,8 +59,7 @@ public class AuthController {
             description = "Provide user's email and password to log in",
             tags = "Post",
             parameters = @Parameter(name = "Login user dto",
-                    description = "Email and password to sign in",
-                    required = true))
+                    description = "Email and password to sign in"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully Logged",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AuthToken.class))}),
