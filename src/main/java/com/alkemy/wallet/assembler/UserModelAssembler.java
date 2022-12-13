@@ -3,10 +3,12 @@ package com.alkemy.wallet.assembler;
 import com.alkemy.wallet.assembler.model.UserModel;
 import com.alkemy.wallet.controller.UserController;
 import com.alkemy.wallet.dto.ResponseUserDto;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
+@Hidden
 @Component
 public class UserModelAssembler
         extends RepresentationModelAssemblerSupport<ResponseUserDto, UserModel> {

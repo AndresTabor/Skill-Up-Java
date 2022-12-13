@@ -2,7 +2,8 @@ package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.controller.TransactionsController;
 import com.alkemy.wallet.dto.AccountDto;
-import com.alkemy.wallet.dto.TransactionDto;
+import com.alkemy.wallet.dto.RequestTransactionDto;
+import com.alkemy.wallet.dto.ResponseTransactionDto;
 import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Transaction;
@@ -13,6 +14,7 @@ import com.alkemy.wallet.repository.ITransactionRepository;
 import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IUserService;
+import com.alkemy.wallet.util.DataLoaderUser;
 import com.alkemy.wallet.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +36,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,46 +51,36 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
 class TransactionSendArsTest {
-
+    @MockBean
+    DataLoaderUser dataLoaderUser;
     @Autowired
     private MockMvc mockMvc;
-
     @MockBean
     private ITransactionRepository transactionRepository;
-
     @MockBean
     private IAccountRepository accountRespository;
-
     @MockBean
     private IUserRepository userRepository;
     @InjectMocks
     private TransactionService transactionService;
-
     @MockBean
     private IUserService userService;
     @MockBean
     private IAccountService accountService;
-
-    private TransactionDto transactionBetweenUsdAccounts;
-
+    private ResponseTransactionDto transactionBetweenUsdAccounts;
     private Transaction transaction;
     private Account senderAccountTest, receivingAccountTest;
     private User userTest, userTest2;
-    private TransactionDto transactionBetweenArsAccounts;
-
+    private RequestTransactionDto transactionBetweenArsAccounts;
     @Autowired
     private Mapper mapper;
-
     @MockBean
     private JwtUtil jwtUtil;
 
     @Autowired
     private ObjectMapper objectMapper;
     private List<Account> accountsTest;
-
-
     private final String token = "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NzA4Njc3NTMsInN1YiI6InZpY3RvcmlvLnNhcm5hZ2xpYUBnbWFpbC5jb20iLCJpc3MiOiJNYWluIiwiZXhwIjoxNjcxNDcyNTUzfQ.-LQO6GnpJu7IPij-U6np15gVzT5sRQWQ1y_IeelcrCU";
-
 
     @BeforeEach
     void setUp() {
@@ -126,10 +117,9 @@ class TransactionSendArsTest {
         accountsTest = new ArrayList<>();
         accountsTest.add(senderAccountTest);
 
-        transactionBetweenArsAccounts = new TransactionDto();
+        transactionBetweenArsAccounts = new RequestTransactionDto();
         transactionBetweenArsAccounts.setDescription("Descripcion prueba ARS");
         transactionBetweenArsAccounts.setAmount(200.);
-        transactionBetweenArsAccounts.setTransactionDate(new Date());
         transactionBetweenArsAccounts.setAccount(mapper.getMapper().map(receivingAccountTest, AccountDto.class));
 
         transaction = mapper.getMapper().map(transactionBetweenArsAccounts, Transaction.class);

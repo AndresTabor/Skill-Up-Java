@@ -15,6 +15,7 @@ import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.ICustomUserDetailsService;
 import com.alkemy.wallet.service.interfaces.IRoleService;
 import com.alkemy.wallet.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +36,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+@Hidden
 @Service
 public class CustomUserDetailsService implements ICustomUserDetailsService {
 
@@ -54,7 +56,7 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
     private AuthenticationManager authenticationManager;
 
     @Override
-    public ResponseUserDto save(@Valid RequestUserDto requestUserDto) {
+    public ResponseUserDto save(RequestUserDto requestUserDto) {
 
         if (userRepository.existsByEmail(requestUserDto.getEmail())) {
             throw new ResourceFoundException("User email already exists");

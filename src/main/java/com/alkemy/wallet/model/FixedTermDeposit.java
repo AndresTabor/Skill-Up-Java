@@ -15,7 +15,6 @@ import java.time.LocalDate;
 @Table(name = "fixed_deposits")
 @AllArgsConstructor
 @RequiredArgsConstructor
-//@ApiModel("Plazos fijos")
 public class FixedTermDeposit {
 
     @Id

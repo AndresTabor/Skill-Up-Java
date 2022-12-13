@@ -1,5 +1,6 @@
 package com.alkemy.wallet.config;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 
+@Hidden
 @EnableMethodSecurity
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -26,14 +28,11 @@ public class SecurityConfig {
                 .authorizeRequests(auth -> {
                     auth
                             .antMatchers("/api/**", "/swagger-ui/**", "/javainuse-openapi/**",
-                                    "/auth/**", "/fixedTermDeposit/simulate").permitAll()
-                            .anyRequest().authenticated();
+                                    "/auth/**", "/fixedTermDeposit/simulate").permitAll();
 
                 })
-                //.addFilterBefore(jwtAuthenticationFilter(),
-                // UsernamePasswordAuthenticationFilter.class)
-                .httpBasic()
-                .and()
+
+                //.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

@@ -4,6 +4,7 @@ import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.IUserRepository;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.GrantedAuthority;
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+@Hidden
 @Service
 @RequiredArgsConstructor
 public class CUserDetailsService implements UserDetailsService {

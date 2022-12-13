@@ -12,14 +12,15 @@ import com.alkemy.wallet.repository.IFixedTermRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IFixedTermService;
 import com.alkemy.wallet.service.interfaces.IUserService;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
-import org.springframework.stereotype.Service;
-
+@Hidden
 @Service
 public class FixedTermService implements IFixedTermService {
 

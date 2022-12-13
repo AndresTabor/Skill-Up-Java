@@ -1,6 +1,7 @@
 package com.alkemy.wallet.dto;
 
 import com.alkemy.wallet.model.Role;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Data;
 
 import javax.validation.constraints.Email;

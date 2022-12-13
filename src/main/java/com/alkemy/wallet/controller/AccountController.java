@@ -62,7 +62,9 @@ public class AccountController {
     @GetMapping("/{userId}")
     @Operation(summary = "Get user's accounts",
             description = "Provides a list of the user's accounts",
-            tags = "Get")
+            tags = "Account Controller",
+            parameters = @Parameter(name = "User´s id",
+                    description = "Indicate account owner's id"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Accounts found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicAccountDto.class))}),
@@ -70,10 +72,7 @@ public class AccountController {
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
-    public ResponseEntity<List<BasicAccountDto>> getAllAccountByUserId(
-            @Parameter(name = "User´s id",
-                    required = true)
-            @PathVariable Long userId) throws EmptyResultDataAccessException {
+    public ResponseEntity<List<BasicAccountDto>> getAllAccountByUserId(@PathVariable Long userId) throws EmptyResultDataAccessException {
         List<BasicAccountDto> accounts = accountService.getAccountsByUserId(userId).stream()
                 .map(account -> mapper.getMapper().map(account, BasicAccountDto.class))
                 .collect(Collectors.toList());
@@ -83,7 +82,7 @@ public class AccountController {
     @GetMapping
     @Operation(summary = "Paged transactions list",
             description = "Provides a paged transactions list to be verified by the user",
-            tags = "Get")
+            tags = "Account Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transactions found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AccountModel.class))}),
@@ -102,23 +101,32 @@ public class AccountController {
     @PostMapping
     @Operation(summary = "Create account",
             description = "Create a new account",
-            tags = "Post")
+            tags = "Account Controller",
+            parameters = @Parameter(name = "Account info",
+                    description = "Currency, transaction limit, balance and owner's id"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account created",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicAccountDto.class))}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
-    public ResponseEntity<?> postAccount(@RequestHeader(name = "Authorization") String token,
-                                         @Parameter(name = "Currency, transaction limit, balance and owner's id ",
-                                                 required = true)
-                                         @Valid @RequestBody BasicAccountDto basicAccountDto) {
+
+    public ResponseEntity<?> postAccount(
+            @Parameter(name = "Token",
+                    required = true,
+                    hidden = true)
+            @RequestHeader(name = "Authorization") String token,
+            @RequestBody BasicAccountDto basicAccountDto) {
         return accountService.postAccount(basicAccountDto, token);
     }
 
     @PatchMapping("/{id}")
     @Operation(summary = "Update account",
             description = "Update an existent account",
-            tags = "Patch")
+            tags = "Account Controller",
+            parameters = {@Parameter(name = "Account's id",
+                    description = "Indicate accout's id in order to find it"),
+                    @Parameter(name = "New transaction limit",
+                            description = "Indicate new transaction limit in order tu update it")})
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Account created",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicAccountDto.class))}),
@@ -127,12 +135,11 @@ public class AccountController {
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<?> updateAccountController(
-            @Parameter(name = "Account's id",
-                    required = true)
             @PathVariable Long id,
-            @Parameter(name = "New transaction limit",
-                    required = true)
             @Valid @RequestBody AccountUpdateDto newTransactionLimit,
+            @Parameter(name = "Token",
+                    required = true,
+                    hidden = true)
             @RequestHeader("Authorization") String token) {
         return accountService.updateAccount(id, newTransactionLimit, token);
     }
@@ -140,7 +147,7 @@ public class AccountController {
     @GetMapping("/balance")
     @Operation(summary = "Get balance",
             description = "Provides user's accounts balances",
-            tags = "Get")
+            tags = "Account Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Balances found",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BalanceDto.class))}),
@@ -148,7 +155,11 @@ public class AccountController {
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
-    public ResponseEntity<List<BalanceDto>> getBalance(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<BalanceDto>> getBalance(
+            @Parameter(name = "Token",
+                    required = true,
+                    hidden = true)
+            @RequestHeader("Authorization") String token) {
         return ResponseEntity.ok(accountService.getBalance(token));
     }
 

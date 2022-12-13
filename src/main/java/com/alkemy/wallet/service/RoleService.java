@@ -1,6 +1,5 @@
 package com.alkemy.wallet.service;
 
-import com.alkemy.wallet.dto.RoleDto;
 import com.alkemy.wallet.exception.ResourceFoundException;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.listing.RoleName;
@@ -8,12 +7,13 @@ import com.alkemy.wallet.mapper.Mapper;
 import com.alkemy.wallet.model.Role;
 import com.alkemy.wallet.repository.IRoleRepository;
 import com.alkemy.wallet.service.interfaces.IRoleService;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.Locale;
-import java.util.Optional;
 
+@Hidden
 @Service
 public class RoleService implements IRoleService {
 
@@ -31,7 +31,7 @@ public class RoleService implements IRoleService {
     @Override
     public Role findByName(RoleName roleName) {
         Role role = roleRepository.findByName(roleName);
-        if (role != null ) {
+        if (role != null) {
             return role;
         }
         throw new ResourceNotFoundException(messageSource.getMessage("rolename.notfound.exception",
@@ -39,7 +39,7 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public Role createRole(Role role) {
+    public Role createRole(Role role) throws ResourceFoundException {
         if (roleRepository.existsByName(role.getName())) {
             throw new ResourceFoundException("Role already exists");
         }

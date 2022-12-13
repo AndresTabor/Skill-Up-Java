@@ -11,6 +11,7 @@ import com.alkemy.wallet.repository.IFixedTermRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -28,6 +29,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Hidden
 @Service
 public class AccountService implements IAccountService {
 
@@ -122,7 +124,7 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public boolean checkAccountLimit(Account senderAccount, TransactionDto transactionDto) {
+    public boolean checkAccountLimit(Account senderAccount, RequestTransactionDto transactionDto) {
         if (transactionDto.getAmount() < senderAccount.getTransactionLimit())
             return true;
         else throw new AccountLimitException("Account transaction limit exceeded");

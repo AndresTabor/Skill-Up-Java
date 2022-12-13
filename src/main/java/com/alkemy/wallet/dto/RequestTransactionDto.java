@@ -5,13 +5,9 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class TransactionDto {
-
-    private Long id;
+public class RequestTransactionDto {
 
     private Double amount;
-
-    private Date transactionDate;
 
     private String description;
 

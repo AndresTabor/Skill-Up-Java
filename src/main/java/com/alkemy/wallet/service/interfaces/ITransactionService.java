@@ -1,8 +1,10 @@
 package com.alkemy.wallet.service.interfaces;
 
-import com.alkemy.wallet.dto.TransactionDto;
+import com.alkemy.wallet.dto.RequestTransactionDto;
+import com.alkemy.wallet.dto.ResponseTransactionDto;
 import com.alkemy.wallet.model.Account;
 import com.alkemy.wallet.model.Transaction;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
@@ -10,14 +12,15 @@ import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.List;
 
+@Hidden
 public interface ITransactionService {
-    HashSet<TransactionDto> getByUserId(@Valid List<Account> accounts);
+    HashSet<ResponseTransactionDto> getByUserId(@Valid List<Account> accounts);
 
-    TransactionDto createTransactions(Transaction transactionIncome, Transaction transactionPayment);
+    ResponseTransactionDto createTransactions(Transaction transactionIncome, Transaction transactionPayment);
 
-    ResponseEntity<Object> makeTransaction(String token, TransactionDto destinedTransactionDto);
+    ResponseEntity<Object> makeTransaction(String token, RequestTransactionDto destinedTransactionDto);
 
-    Page<TransactionDto> findAllTransactionsByUserIdPageable(Long id, int page, String token);
+    Page<ResponseTransactionDto> findAllTransactionsByUserIdPageable(Long id, int page, String token);
 
     ResponseEntity<?> getTransaction(Long id, String token);
 
@@ -27,7 +30,7 @@ public interface ITransactionService {
 
     boolean checkTransactionAmount(Double amount);
 
-    ResponseEntity<?> createPayment(TransactionDto transctionDto);
+    ResponseEntity<?> createPayment(RequestTransactionDto transctionDto);
 
-    ResponseEntity<?> createDeposit(TransactionDto transactionDto);
+    ResponseEntity<?> createDeposit(RequestTransactionDto transactionDto);
 }

@@ -32,13 +32,15 @@ public class UserController {
     @Autowired
     private PagedResourcesAssembler<ResponseUserDto> pagedResourcesAssembler;
     @Autowired
-    private IUserService iUserService;
+    private IUserService userService;
 
     @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @PatchMapping("/{id}")
     @Operation(summary = "Update user",
             description = "Provide user logged details to update",
-            tags = "Patch")
+            tags = "User Controller",
+            parameters = @Parameter(name = "Request user dto",
+                    description = "First name, last name, email and password to update user"))
     @ApiResponses(value = {
         @ApiResponse(responseCode = "202", description = "Successfully Logged",
                 content = {
@@ -49,19 +51,18 @@ public class UserController {
         @ApiResponse(responseCode = "403", description = "Access denied",
                 content = {
                     @Content(mediaType = "application/json")})})
-    public ResponseEntity<ResponseUserDto> updateUser(
-            @Parameter(name = "First name, last name, email and password to update user",
-                    required = true)
-            @RequestBody RequestUserDto requestUserDto) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED)
-                .body(customUserDetailsService.update(requestUserDto));
+
+    public ResponseEntity<ResponseUserDto> updateUser(@RequestBody RequestUserDto requestUserDto) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(customUserDetailsService.update(requestUserDto));
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
+    @PreAuthorize("hasAnyAuthority('ROLE_USER','ROLE_ADMIN')")
     @GetMapping("/{id}")
     @Operation(summary = "User logged details",
             description = "Provides user logged details to verify",
-            tags = "Get")
+            tags = "User Controller",
+            parameters = @Parameter(name = "User id",
+                    description = "Current logged user´s id"))
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "User details found",
                 content = {
@@ -72,28 +73,22 @@ public class UserController {
         @ApiResponse(responseCode = "403", description = "Access denied",
                 content = {
                     @Content(mediaType = "application/json")})})
-    public ResponseEntity<ResponseUserDto> getUserLoggedDetails(
-            @Parameter(name = "Current logged user´s id",
-                    required = true)
-            @PathVariable Long id) {
+    public ResponseEntity<ResponseUserDto> getUserLoggedDetails(@PathVariable Long id) {
         return ResponseEntity.ok().body(customUserDetailsService.getUserLoggedById(id));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @GetMapping
     @Operation(summary = "Paged user list",
             description = "Provides a paged user list to be verified by administrators",
-            tags = "Get")
+            tags = "User Controller")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Users found",
-                content = {
-                    @Content(mediaType = "application/json", schema = @Schema(implementation = ResponseUserDto.class))}),
+                content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseUserDto.class))}),
         @ApiResponse(responseCode = "404", description = "There is no user registered",
-                content = {
-                    @Content(mediaType = "application/json")}),
+                content = {@Content(mediaType = "application/json")}),
         @ApiResponse(responseCode = "403", description = "Access denied",
-                content = {
-                    @Content(mediaType = "application/json")})})
+                content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<?> getUserPage(@RequestParam(defaultValue = "0") int page) {
         try {
             Page<ResponseUserDto> users = customUserDetailsService.findAllUsersPageable(page);
@@ -104,14 +99,24 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN','USER')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@RequestHeader(value = "Authorization") String token, @PathVariable Long id) {
-
-        iUserService.softDelete(token, id);
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-
+    @Operation(summary = "Delete user",
+            description = "Deletes the targeted user",
+            tags = "User Controller",
+            parameters = @Parameter(name = "User id",
+                    description = "Targeted user´s id"))
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "User deleted",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404", description = "User not found",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "403", description = "Access denied",
+                    content = {@Content(mediaType = "application/json")})})
+    public ResponseEntity<?> deleteUser(
+            @RequestHeader(value = "Authorization") String token,
+            @PathVariable Long id) {
+        return userService.softDelete(token, id);
     }
 
 }

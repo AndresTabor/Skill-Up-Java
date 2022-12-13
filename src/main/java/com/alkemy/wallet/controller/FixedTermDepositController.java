@@ -26,7 +26,7 @@ public class FixedTermDepositController {
     @PostMapping("/fixedDeposit")
     @Operation(summary = "Create fixed term deposit",
             description = "Generates a fixed term deposit with a defined ammount and interest",
-            tags = "Post")
+            tags = "Fixed Term Deposit Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Fixed term deposit created",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = FixedTermDto.class))}),
@@ -44,8 +44,9 @@ public class FixedTermDepositController {
 
     @PostMapping("/fixedTermDeposit/simulate")
     @Operation(summary = "Simulate fixed term deposit",
-            description = "Generates a simulation of a fixed term deposit with a defined amount and interest",
-            tags = "Post")
+
+            description = "Generates a simulation of a fixed term deposit with a defined ammount and interest",
+            tags = "Fixed Term Deposit Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Fixed term deposit simulated",
                     content = {@Content(mediaType = "application/json",
