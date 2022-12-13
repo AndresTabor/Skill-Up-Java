@@ -5,6 +5,7 @@ import com.alkemy.wallet.dto.LoginUserDto;
 import com.alkemy.wallet.dto.RequestUserDto;
 import com.alkemy.wallet.dto.ResponseUserDto;
 import com.alkemy.wallet.service.interfaces.ICustomUserDetailsService;
+import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -38,6 +39,9 @@ public class AuthController {
     @Autowired
     private ICustomUserDetailsService customUserDetailsService;
 
+    @Autowired
+    IUserService userService;
+
     @PostMapping("/register")
     @Operation(summary = "Register a new user",
             description = "Provide user's details to register him",
@@ -67,12 +71,8 @@ public class AuthController {
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = AuthToken.class))}),
             @ApiResponse(responseCode = "403", description = "Bad login attempt",
                     content = {@Content(mediaType = "application/json")})})
-    public ResponseEntity<AuthToken> signIn(@Valid @RequestBody LoginUserDto loginUser) throws AuthenticationException {
-        final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginUser.getEmail(), loginUser.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        return ResponseEntity.ok(new AuthToken(jwtTokenUtil.create(authentication)));
+    public ResponseEntity<?> signIn(@Valid @RequestBody LoginUserDto loginUser) throws AuthenticationException {
+        return userService.login(loginUser);
     }
 
     @GetMapping("/logout")
