@@ -9,11 +9,14 @@ import com.alkemy.wallet.model.FixedTermDeposit;
 import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IFixedTermRepository;
+import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IFixedTermService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,18 +31,20 @@ public class FixedTermService implements IFixedTermService {
     private static final Double DAILY_INTEREST = 0.005;
     private final Mapper mapper;
     private final IUserService userService;
+    private final IUserRepository userRepository;
     private final IFixedTermRepository fixedTermRepository;
     private final IAccountService accountService;
     private final IAccountRepository accountRepository;
     private final MessageSource messageSource;
 
     public FixedTermService(Mapper mapper, IUserService userService,
-                            IFixedTermRepository fixedTermRepository,
+                            IUserRepository userRepository, IFixedTermRepository fixedTermRepository,
                             IAccountService accountService,
                             IAccountRepository accountRepository,
                             MessageSource messageSource) {
         this.mapper = mapper;
         this.userService = userService;
+        this.userRepository = userRepository;
         this.fixedTermRepository = fixedTermRepository;
         this.accountService = accountService;
         this.accountRepository = accountRepository;
@@ -47,8 +52,9 @@ public class FixedTermService implements IFixedTermService {
     }
 
     @Override
-    public FixedTermDto createFixedTerm(FixedTermDto fixedTermDto, String token) {
-        User user = userService.findLoggedUser(token);
+    public FixedTermDto createFixedTerm(FixedTermDto fixedTermDto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByEmail(auth.getName());
 
         FixedTermDeposit fixedTerm = mapper.getMapper().map(fixedTermDto, FixedTermDeposit.class);
 

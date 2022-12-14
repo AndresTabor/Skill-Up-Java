@@ -151,5 +151,4 @@ public class AccountController {
     public ResponseEntity<List<BalanceDto>> getBalance() {
         return ResponseEntity.ok(accountService.getBalance());
     }
-
 }

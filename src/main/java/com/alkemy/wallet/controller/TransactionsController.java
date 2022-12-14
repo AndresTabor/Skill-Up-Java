@@ -21,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
@@ -50,6 +51,7 @@ public class TransactionsController {
     @Autowired
     private IUserService userService;
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @GetMapping("/transactions/{userId}")
     @Operation(summary = "Get user's transactions",
             description = "Provides a list of the user's transactions",
@@ -67,6 +69,7 @@ public class TransactionsController {
         return transactionService.getByUserId(accountService.getAccountsByUserId(userId));
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @GetMapping("/transaction/{id}")
     @Operation(summary = "Get transaction",
             description = "Provides an specific transaction",
@@ -84,6 +87,7 @@ public class TransactionsController {
         return transactionService.getTransaction(id);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @PatchMapping("/transactions/{id}")
     @Operation(summary = "Update a transaction",
             description = "Update an existent transaction",
@@ -105,6 +109,7 @@ public class TransactionsController {
         return transactionService.patchTransaction(id, description);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
     @GetMapping("/transactions/page/{userId}")
     @Operation(summary = "Get user's transactions",
             description = "Provides a paged list of the user's transactions",
@@ -127,6 +132,7 @@ public class TransactionsController {
         return ResponseEntity.ok().body(model);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @PostMapping("/transactions/sendUsd")
     @Operation(summary = "Send USD",
             description = "Generates a transaction in USD from a logged user",
@@ -147,6 +153,7 @@ public class TransactionsController {
         return transactionService.makeTransaction(destinedTransactionDto);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @PostMapping("/transactions/sendArs")
     @Operation(summary = "Send ARS",
             description = "Generates a transaction in ARS from a logged user",
@@ -187,6 +194,7 @@ public class TransactionsController {
         return transactionService.createDeposit(transactionDto);
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_USER')")
     @PostMapping("/transactions/payment")
     @Operation(summary = "Pay",
             description = "Generates a payment",

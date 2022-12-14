@@ -37,9 +37,8 @@ public class FixedTermDepositController {
     public ResponseEntity<FixedTermDto> createFixedDeposit(
             @Parameter(name = "Fixed term deposit info",
                     required = true)
-            @Valid @RequestBody FixedTermDto fixedTermDto,
-            @RequestHeader("Authorization") String token) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(fixedTermService.createFixedTerm(fixedTermDto, token));
+            @Valid @RequestBody FixedTermDto fixedTermDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(fixedTermService.createFixedTerm(fixedTermDto));
     }
 
     @PostMapping("/fixedTermDeposit/simulate")
