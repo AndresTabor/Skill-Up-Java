@@ -8,6 +8,7 @@ import com.alkemy.wallet.model.User;
 import com.alkemy.wallet.model.enums.Currency;
 import com.alkemy.wallet.repository.IAccountRepository;
 import com.alkemy.wallet.repository.IFixedTermRepository;
+import com.alkemy.wallet.repository.IUserRepository;
 import com.alkemy.wallet.service.interfaces.IAccountService;
 import com.alkemy.wallet.service.interfaces.IUserService;
 import com.alkemy.wallet.util.JwtUtil;
@@ -20,6 +21,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,23 +39,23 @@ public class AccountService implements IAccountService {
     private final IAccountRepository accountRepository;
     private final IFixedTermRepository fixedTermRepository;
     private final IUserService userService;
+    private final IUserRepository userRepository;
     private final ModelMapper mapper;
     private final JwtUtil jwtUtil;
     private final MessageSource messageSource;
 
-    public AccountService(IAccountRepository accountRepository, IFixedTermRepository fixedTermRepository, IUserService userService, ModelMapper mapper, JwtUtil jwtUtil, MessageSource messageSource) {
+    public AccountService(IAccountRepository accountRepository, IFixedTermRepository fixedTermRepository, IUserService userService, IUserRepository userRepository, ModelMapper mapper, JwtUtil jwtUtil, MessageSource messageSource) {
         this.accountRepository = accountRepository;
         this.fixedTermRepository = fixedTermRepository;
         this.userService = userService;
+        this.userRepository = userRepository;
         this.mapper = mapper;
         this.jwtUtil = jwtUtil;
         this.messageSource = messageSource;
     }
 
     @Override
-    public BasicAccountDto createAccount(AccountCreateDto accountCreateDto, String token) {
-
-        User user = userService.findLoggedUser(token);
+    public BasicAccountDto createAccount(AccountCreateDto accountCreateDto, User user) {
 
         if (user != null) {
             List<Account> accounts = accountRepository.findAllByUser_Email(user.getEmail());
@@ -130,9 +133,10 @@ public class AccountService implements IAccountService {
         else throw new AccountLimitException("Account transaction limit exceeded");
     }
 
-    public ResponseEntity<?> updateAccount(Long id, AccountUpdateDto newTransactionLimit, String token) {
+    public ResponseEntity<?> updateAccount(Long id, AccountUpdateDto newTransactionLimit) {
         try {
-            User user = userService.findLoggedUser(token);
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            User user = userRepository.findByEmail(auth.getName());
             Account account = accountRepository.findById(id).orElseThrow(()
                     -> new ResourceNotFoundException(messageSource.getMessage("account.notfound.exception",
                     new Object[] {id}, Locale.ENGLISH)));
@@ -164,12 +168,11 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public ResponseEntity<?> postAccount(BasicAccountDto basicAccountDto, String token) {
+    public ResponseEntity<?> postAccount(BasicAccountDto basicAccountDto) {
         try {
-            userService.checkLoggedUser(token);
-//            UserDto loggedUser = userService.findByEmail(jwtUtil.getValue(token));
-//            checkAccountExistence(loggedUser.getId(), basicAccountDto.getCurrency());
-            return ResponseEntity.status(HttpStatus.OK).body(createAccount(mapper.map(basicAccountDto, AccountCreateDto.class), token));
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            User user = userRepository.findByEmail(auth.getName());
+            return ResponseEntity.status(HttpStatus.OK).body(createAccount(mapper.map(basicAccountDto, AccountCreateDto.class), user));
 
         } catch (UserNotLoggedException | AccountAlreadyExistsException e) {
             System.out.println(e.getMessage());
@@ -178,8 +181,9 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public List<BalanceDto> getBalance(String token) {
-        User user = userService.findLoggedUser(token);
+    public List<BalanceDto> getBalance() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByEmail(auth.getName());
         List<AccountDto> accounts = getAccountsByUserEmail(user.getEmail());
         return accounts
                 .stream()

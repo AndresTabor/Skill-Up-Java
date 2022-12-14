@@ -63,11 +63,7 @@ public class TransactionsController {
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
-    public HashSet<ResponseTransactionDto> getTransactions(
-            @Parameter(name = "User´s id",
-                    required = true)
-            @PathVariable("userId") Long userId) {
-
+    public HashSet<ResponseTransactionDto> getTransactions(@PathVariable Long userId) {
         return transactionService.getByUserId(accountService.getAccountsByUserId(userId));
     }
 
@@ -84,13 +80,8 @@ public class TransactionsController {
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
-    public ResponseEntity<?> getTransaction(
-            @PathVariable Long id,
-            @Parameter(name = "Token",
-                    required = true,
-                    hidden = true)
-            @RequestHeader(name = "Authorization") String token) {
-        return transactionService.getTransaction(id, token);
+    public ResponseEntity<?> getTransaction(@PathVariable Long id) {
+        return transactionService.getTransaction(id);
     }
 
     @PatchMapping("/transactions/{id}")
@@ -110,20 +101,16 @@ public class TransactionsController {
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<?> patchTransaction(
             @PathVariable("id") Long id,
-            @Parameter(name = "Token",
-                    required = true,
-                    hidden = true)
-            @RequestHeader(name = "Authorization") String token,
             @RequestBody String description) {
-        return transactionService.patchTransaction(id, token, description);
+        return transactionService.patchTransaction(id, description);
     }
 
-    @GetMapping("/transactions/page/{id}")
+    @GetMapping("/transactions/page/{userId}")
     @Operation(summary = "Get user's transactions",
             description = "Provides a paged list of the user's transactions",
             tags = "Transaction Controller",
             parameters = @Parameter(name = "User´s id",
-                    description = "Indicate user's id in order to find his transactions"))
+                    description = "Indicate account owner's id"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction updated",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ResponseTransactionDto.class))}),
@@ -131,15 +118,9 @@ public class TransactionsController {
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
-    public ResponseEntity<PagedModel<TransactionModel>> getTransactionPage(
-            @PathVariable("id") Long userId,
-            @RequestParam(defaultValue = "0") int page,
-            @Parameter(name = "Token",
-                    required = true,
-                    hidden = true)
-            @RequestHeader("Authorization") String token) {
+    public ResponseEntity<PagedModel<TransactionModel>> getTransactionPage(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page) {
 
-        Page<ResponseTransactionDto> transactions = transactionService.findAllTransactionsByUserIdPageable(userId, page, token);
+        Page<ResponseTransactionDto> transactions = transactionService.findAllTransactionsByUserIdPageable(userId, page);
 
         PagedModel<TransactionModel> model = pagedResourcesAssembler.toModel(transactions, transactionModelAssembler);
 
@@ -154,21 +135,16 @@ public class TransactionsController {
                     description = "Transaction info and destined account"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Transaction generated",
-
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = RequestTransactionDto.class))}),
             @ApiResponse(responseCode = "400", description = "Something went wrong",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<Object> sendUsd(
-            @Parameter(name = "Token",
-                    required = true,
-                    hidden = true)
-            @RequestHeader(name = "Authorization") String token,
-            @Parameter(name = "Transaction info and destined account",
+            @RequestBody
+            @Parameter(name = "TransactionDto",
+                    description = "Transaction info and destined account",
                     required = true)
-            @RequestBody RequestTransactionDto destinedTransactionDto) {
-
-
-        return transactionService.makeTransaction(token, destinedTransactionDto);
+            RequestTransactionDto destinedTransactionDto) {
+        return transactionService.makeTransaction(destinedTransactionDto);
     }
 
     @PostMapping("/transactions/sendArs")
@@ -183,15 +159,11 @@ public class TransactionsController {
             @ApiResponse(responseCode = "400", description = "Something went wrong",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<Object> sendArs(
-            @Parameter(name = "Token",
-                    required = true,
-                    hidden = true)
-            @RequestHeader(name = "Authorization") String token,
+            @RequestBody
             @Parameter(name = "Transaction info and destined account",
                     required = true)
-            @RequestBody RequestTransactionDto destinedTransactionDto) {
-
-        return transactionService.makeTransaction(token, destinedTransactionDto);
+            RequestTransactionDto destinedTransactionDto) {
+        return transactionService.makeTransaction(destinedTransactionDto);
     }
 
     @PostMapping("/transactions/deposit")

@@ -101,32 +101,24 @@ public class AccountController {
     @PostMapping
     @Operation(summary = "Create account",
             description = "Create a new account",
-            tags = "Account Controller",
-            parameters = @Parameter(name = "Account info",
-                    description = "Currency, transaction limit, balance and owner's id"))
+            tags = "Account Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Account created",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicAccountDto.class))}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
-
     public ResponseEntity<?> postAccount(
-            @Parameter(name = "Token",
-                    required = true,
-                    hidden = true)
-            @RequestHeader(name = "Authorization") String token,
-            @RequestBody BasicAccountDto basicAccountDto) {
-        return accountService.postAccount(basicAccountDto, token);
+            @RequestBody
+            @Parameter(name = "Account info",
+                    description = "Currency, transaction limit, balance and owner's id")
+            BasicAccountDto basicAccountDto) {
+        return accountService.postAccount(basicAccountDto);
     }
 
     @PatchMapping("/{id}")
     @Operation(summary = "Update account",
             description = "Update an existent account",
-            tags = "Account Controller",
-            parameters = {@Parameter(name = "Account's id",
-                    description = "Indicate accout's id in order to find it"),
-                    @Parameter(name = "New transaction limit",
-                            description = "Indicate new transaction limit in order tu update it")})
+            tags = "Account Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Account created",
                     content = {@Content(mediaType = "application/json", schema = @Schema(implementation = BasicAccountDto.class))}),
@@ -135,13 +127,14 @@ public class AccountController {
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<?> updateAccountController(
+            @Parameter(name = "Account's id",
+                    description = "Indicate accout's id in order to find it")
             @PathVariable Long id,
-            @Valid @RequestBody AccountUpdateDto newTransactionLimit,
-            @Parameter(name = "Token",
-                    required = true,
-                    hidden = true)
-            @RequestHeader("Authorization") String token) {
-        return accountService.updateAccount(id, newTransactionLimit, token);
+            @Valid @RequestBody
+            @Parameter(name = "New transaction limit",
+                    description = "Indicate new transaction limit in order tu update it")
+            AccountUpdateDto newTransactionLimit) {
+        return accountService.updateAccount(id, newTransactionLimit);
     }
 
     @GetMapping("/balance")
@@ -155,12 +148,8 @@ public class AccountController {
                     content = {@Content(mediaType = "application/json")}),
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
-    public ResponseEntity<List<BalanceDto>> getBalance(
-            @Parameter(name = "Token",
-                    required = true,
-                    hidden = true)
-            @RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(accountService.getBalance(token));
+    public ResponseEntity<List<BalanceDto>> getBalance() {
+        return ResponseEntity.ok(accountService.getBalance());
     }
 
 }

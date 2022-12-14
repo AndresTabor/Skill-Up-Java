@@ -18,13 +18,13 @@ public interface ITransactionService {
 
     ResponseTransactionDto createTransactions(Transaction transactionIncome, Transaction transactionPayment);
 
-    ResponseEntity<Object> makeTransaction(String token, RequestTransactionDto destinedTransactionDto);
+    ResponseEntity<Object> makeTransaction(RequestTransactionDto destinedTransactionDto);
 
-    Page<ResponseTransactionDto> findAllTransactionsByUserIdPageable(Long id, int page, String token);
+    Page<ResponseTransactionDto> findAllTransactionsByUserIdPageable(Long id, int page);
 
-    ResponseEntity<?> getTransaction(Long id, String token);
+    ResponseEntity<?> getTransaction(Long id);
 
-    ResponseEntity<?>  patchTransaction(Long id, String token, String description);
+    ResponseEntity<?>  patchTransaction(Long id, String description);
 
     boolean checkBalance(Double balance, Double amount);
 

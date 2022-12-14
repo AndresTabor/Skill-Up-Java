@@ -2,7 +2,6 @@ package com.alkemy.wallet.service;
 
 import com.alkemy.wallet.dto.AuthToken;
 import com.alkemy.wallet.dto.LoginUserDto;
-import com.alkemy.wallet.dto.UserDto;
 import com.alkemy.wallet.exception.ResourceNotFoundException;
 import com.alkemy.wallet.exception.UserNotAllowed;
 import com.alkemy.wallet.exception.UserNotLoggedException;
@@ -73,9 +72,9 @@ public class UserService implements IUserService {
 
 
     @Override
-    public ResponseEntity<?> softDelete(String token, Long id) {
-        try {
-            User loggedUser = findLoggedUser(token);
+    public ResponseEntity<?> softDelete(Long id) {
+        try {Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            User loggedUser = userRepository.findByEmail(auth.getName());
             User userToDelete = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
             if (loggedUser.getRole().getName() == RoleName.ROLE_ADMIN) {
                 userToDelete.setSoftDelete(Boolean.TRUE);

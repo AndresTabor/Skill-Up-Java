@@ -102,9 +102,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete user",
             description = "Deletes the targeted user",
-            tags = "User Controller",
-            parameters = @Parameter(name = "User id",
-                    description = "Targeted user´s id"))
+            tags = "User Controller")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "User deleted",
                     content = {@Content(mediaType = "application/json")}),
@@ -113,12 +111,10 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<?> deleteUser(
-            @Parameter(name = "Token",
-                    description = "Authorization header",
-                    hidden = true)
-            @RequestHeader(value = "Authorization") String token,
+            @Parameter(name = "User id",
+                    description = "Targeted user´s id")
             @PathVariable Long id) {
-        return userService.softDelete(token, id);
+        return userService.softDelete(id);
     }
 
 }
