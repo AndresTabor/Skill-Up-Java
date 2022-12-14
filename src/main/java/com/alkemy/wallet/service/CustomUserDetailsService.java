@@ -84,8 +84,8 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 
         String token = this.authenticated(requestUserDto);
 
-        accountService.createAccount(new AccountCreateDto(Currency.ars), token);
-        accountService.createAccount(new AccountCreateDto(Currency.usd), token);
+        accountService.createAccount(new AccountCreateDto(Currency.ars), user);
+        accountService.createAccount(new AccountCreateDto(Currency.usd), user);
 
         ResponseUserDto responseUserDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
         responseUserDto.setToken(token);
@@ -110,8 +110,8 @@ public class CustomUserDetailsService implements ICustomUserDetailsService {
 
         String token = this.authenticated(requestUserDto);
 
-        accountService.createAccount(new AccountCreateDto(Currency.ars), token);
-        accountService.createAccount(new AccountCreateDto(Currency.usd), token);
+        accountService.createAccount(new AccountCreateDto(Currency.ars), user);
+        accountService.createAccount(new AccountCreateDto(Currency.usd), user);
 
         ResponseUserDto responseUserDto = mapper.getMapper().map(userSaved, ResponseUserDto.class);
         responseUserDto.setToken(token);

@@ -25,6 +25,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
@@ -86,10 +88,10 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public ResponseEntity<Object> makeTransaction(String token, RequestTransactionDto destinedTransactionDto) {
+    public ResponseEntity<Object> makeTransaction(RequestTransactionDto destinedTransactionDto) {
         try {
-            userService.checkLoggedUser(token);
-            User senderUser = userRepository.findByEmail(jwtUtil.getValue(token));
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            User senderUser = userRepository.findByEmail(auth.getName());
             Account senderAccount = accountService.getAccountByCurrency(senderUser.getId(),
                     destinedTransactionDto.getAccount().getCurrency());
             Account destinedAccount = accountRepository.findById(destinedTransactionDto.getAccount()
@@ -116,9 +118,9 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public Page<ResponseTransactionDto> findAllTransactionsByUserIdPageable(Long id, int page, String token) {
-
-        User user = userService.findLoggedUser(token);
+    public Page<ResponseTransactionDto> findAllTransactionsByUserIdPageable(Long id, int page) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByEmail(auth.getName());
         Pageable pageable = PageRequest.of(page, 10);
 
         Page<ResponseTransactionDto> pageTransactions = transactionRepository.findByAccount_User_Id(id, pageable).map((transaction) ->
@@ -128,12 +130,17 @@ public class TransactionService implements ITransactionService {
 
     }
 
-    public ResponseEntity<?> getTransaction(Long id, String token) {
+    public ResponseEntity<?> getTransaction(Long id) {
         try {
-            userService.checkLoggedUser(token);
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (userRepository.findByEmail(auth.getName()) == (transactionRepository.findById(id)).get().getAccount().getUser()) {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(mapper.getMapper()
                             .map(transactionRepository.findById(id), ResponseTransactionDto.class));
+            } throw new UserNotLoggedException(messageSource.getMessage(
+                    "user.notlogged.exception",
+                    new Object[]{id},
+                    Locale.ENGLISH));
         } catch (UserNotLoggedException e) {
             System.out.println(e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
@@ -141,18 +148,23 @@ public class TransactionService implements ITransactionService {
     }
 
     @Override
-    public ResponseEntity<?> patchTransaction(Long id, String token, String description) {
+    public ResponseEntity<?> patchTransaction(Long id, String description) {
         try {
-            userService.checkLoggedUser(token);
-            Transaction transaction = transactionRepository.findById(id).orElseThrow(() ->
-                    new ResourceNotFoundException(messageSource.getMessage(
-                            "transaction.notfound.exception",
-                            new Object[]{id},
-                            Locale.ENGLISH)));
-            transaction.setDescription(description);
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(mapper.getMapper()
-                            .map(transactionRepository.save(transaction), ResponseTransactionDto.class));
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (userRepository.findByEmail(auth.getName()) == (transactionRepository.findById(id)).get().getAccount().getUser()) {
+                Transaction transaction = transactionRepository.findById(id).orElseThrow(() ->
+                        new ResourceNotFoundException(messageSource.getMessage(
+                                "transaction.notfound.exception",
+                                new Object[]{id},
+                                Locale.ENGLISH)));
+                transaction.setDescription(description);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(mapper.getMapper()
+                                .map(transactionRepository.save(transaction), ResponseTransactionDto.class));
+            } throw new UserNotLoggedException(messageSource.getMessage(
+                    "user.notlogged.exception",
+                    new Object[]{id},
+                    Locale.ENGLISH));
         } catch (UserNotLoggedException e) {
             logger(e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e);
