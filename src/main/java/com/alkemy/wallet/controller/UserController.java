@@ -113,6 +113,9 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "Access denied",
                     content = {@Content(mediaType = "application/json")})})
     public ResponseEntity<?> deleteUser(
+            @Parameter(name = "Token",
+                    description = "Authorization header",
+                    hidden = true)
             @RequestHeader(value = "Authorization") String token,
             @PathVariable Long id) {
         return userService.softDelete(token, id);
