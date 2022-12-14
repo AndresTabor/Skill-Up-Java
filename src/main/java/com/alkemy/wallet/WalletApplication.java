@@ -13,7 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @SecurityScheme(type = SecuritySchemeType.APIKEY, name = "Bearer", in = SecuritySchemeIn.HEADER)
 @OpenAPIDefinition(
-        info = @Info(title = "Wallet API Messirve LTD",
+        info = @Info(title = "Wallet API Messirve Ltd.",
                 version = "1.0",
                 description = "Transactions without AFIP help",
                 contact = @Contact(name = "Messirve LTD",
