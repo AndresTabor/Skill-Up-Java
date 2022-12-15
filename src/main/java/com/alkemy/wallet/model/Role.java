@@ -1,59 +1,44 @@
 package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.listing.RoleName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.List;
 
-/**
- *
- * @author marti
- */
-@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Entity
+@Table(name="roles")
+//@ApiModel("Rol")
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-//    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    @Column(name = "NAME")
+    @NotNull(message = "{rolename.notnull}")
+    @Column(name = "name")
     @Enumerated(EnumType.STRING)
     private RoleName name;
 
-    @Column(name = "DESCRIPTION")
+    @Column(name = "description")
     @Nullable
     private String description;
 
-    @Column(name = "CREATION_DATE")
+    @Column(name = "creation_date")
     @CreationTimestamp
     private Date creationDate;
 
-    @Column(name = "UPDATE_DATE")
+    @Column(name = "update_date")
     @UpdateTimestamp
     private Date updateDate;
-
-
-    @OneToMany(mappedBy = "role", cascade=CascadeType.ALL)
-    @JsonIgnore
-    private List<User> users;
-
 
 }

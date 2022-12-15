@@ -1,18 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package com.alkemy.wallet.repository;
 
 
+import com.alkemy.wallet.listing.RoleName;
 import com.alkemy.wallet.model.Role;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-/**
- *
- * @author marti
- */
+import java.util.Optional;
+
+@Hidden
 public interface IRoleRepository extends JpaRepository<Role, String> {
 
+    Boolean existsByName(RoleName roleName);
 
+    Role findByName(RoleName role_user);
 }

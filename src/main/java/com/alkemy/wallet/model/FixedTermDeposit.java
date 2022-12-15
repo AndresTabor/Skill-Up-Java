@@ -1,36 +1,41 @@
 package com.alkemy.wallet.model;
 
-import com.sun.istack.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Date;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
-
+@Builder
 @Getter
 @Setter
 @Entity
+@Table(name = "fixed_deposits")
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class FixedTermDeposit {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "fixed_term_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @NotNull(message = "{amount.notnull}")
     private Double amount;
 
-    @NotNull
+    @NotNull(message = "{interest.notnull}")
     private Double interest;
 
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date creationDate;
+    @NotNull(message = "{creationdate.notnull}")
+    @CreationTimestamp
+    @JsonFormat(pattern="dd-MM-yyyy")
+    private LocalDate creationDate;
 
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date closingDate;
+    @NotNull(message = "{closingdate.notnull}")
+    @JsonFormat(pattern="dd-MM-yyyy")
+    private LocalDate closingDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")

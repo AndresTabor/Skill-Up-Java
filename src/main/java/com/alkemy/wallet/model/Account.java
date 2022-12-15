@@ -1,51 +1,66 @@
 package com.alkemy.wallet.model;
 
 import com.alkemy.wallet.model.enums.Currency;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.List;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
-@Entity
-@Table(name = "account")
 @Data
+@Builder
+@AllArgsConstructor
+@RequiredArgsConstructor
+@Entity
+@Table(name = "accounts")
+
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NonNull
+    @NotNull(message = "{currency.notnull}")
+    @Column(name = "currency")
+    @Enumerated(EnumType.STRING)
     private Currency currency;
 
-    @NonNull
-    @Column(name="transaction_limit", nullable = false)
+    @NotNull(message = "{transactionlimit.notnull}")
+    @Column(name = "transaction_limit", nullable = false)
     private Double transactionLimit;
 
-    @NonNull
+    @NotNull(message = "{balance.notnull}")
+    @Column(name = "balance")
     private Double balance;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @Column(name="user_id", nullable = false)
-    private Long userId;
+    @Column(name = "creation_date")
+    @CreationTimestamp
+    private Date creationDate;
 
-    @NonNull
-    private Timestamp timestamp;
+    @Column(name = "update_date")
+    @UpdateTimestamp
+    private Date updateDate;
 
-    @NonNull
-    @Column(name="soft_delete", nullable = false)
+    @NotNull(message = "{softdelete.notnull}")
+    @Column(name = "soft_delete", nullable = false)
     private boolean softDelete;
-//
-//    @OneToMany(mappedBy="transaction")
-//    List<Transaction> transactionList;
-//
 
-    public Account() {
-
+    public Account(Currency currency) {
+        this.balance = 0.;
+        if (currency == Currency.ars) {
+            this.transactionLimit = 300000.0;
+        } else {
+            this.transactionLimit = 1000.;
+        }
+        this.currency = currency;
     }
 }

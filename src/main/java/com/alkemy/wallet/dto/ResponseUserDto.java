@@ -1,38 +1,29 @@
 package com.alkemy.wallet.dto;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ResponseUserDto {
 
-    private Long id;
-
-    @NotEmpty
+    @NotEmpty(message = "{firstname.notnull}")
     private String firstName;
 
-    @NotEmpty
+    @NotEmpty(message = "{lastname.notnull}")
     private String lastName;
 
     @NotEmpty
-    @Email(message = "the email must be real email")
+    @Email(message = "{email.notnull}")
     private String email;
 
-    @NotEmpty
-    private String password;
-/*
- Agregar una vez que esten disponibles las entidades
-*/
-//    private Role role;
-//    private List<AccountDto> accounts;
-
-    // Al refactorizar atributos en esta clase, se deberá actualizar la construcción del userDto
-    // en CustomUserDetailsService
+    private String token;
 
 }

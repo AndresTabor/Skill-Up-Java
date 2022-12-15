@@ -4,9 +4,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -14,32 +16,33 @@ import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
 import java.util.Date;
 
-/**
- * @author
- */
+
+@Hidden
 @Component
 public class JwtUtil {
-    @Value("${security.jwt.secret}")
-    private String key;
-
-    @Value("${security.jwt.issuer}")
-    private String issuer;
-
-    @Value("${security.jwt.ttlMillis}")
-    private long ttlMillis;
-
     private final Logger log = LoggerFactory
             .getLogger(JwtUtil.class);
+    @Value("${security.jwt.secret}")
+    private String key;
+    @Value("${security.jwt.issuer}")
+    private String issuer;
+    @Value("${security.jwt.ttlMillis}")
+    private long ttlMillis;
 
     /**
      * Crear un nuevo token
      *
-     * @param id
-     * @param subject
+     * @param authentication
      * @return
      */
-    public String create(String id, String subject) {
 
+    public String create(Authentication authentication) {
+
+        return create(authentication.getName());
+
+    }
+
+    public String create(String username) {
         // The JWT signature algorithm used to sign the token
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
 
@@ -51,7 +54,10 @@ public class JwtUtil {
         Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
 
         //  set the JWT Claims
-        JwtBuilder builder = Jwts.builder().setId(id).setIssuedAt(now).setSubject(subject).setIssuer(issuer)
+        JwtBuilder builder = Jwts.builder()
+                .setIssuedAt(now)
+                .setSubject(username)
+                .setIssuer(issuer)
                 .signWith(signatureAlgorithm, signingKey);
 
         if (ttlMillis >= 0) {
@@ -92,4 +98,5 @@ public class JwtUtil {
 
         return claims.getId();
     }
+
 }

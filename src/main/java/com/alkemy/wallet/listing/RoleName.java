@@ -1,12 +1,9 @@
 package com.alkemy.wallet.listing;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.Getter;
 
-/**
- *
- * @author marti
- */
-//Ideal que el campo name sea un Enum donde esten definidos los roles, que serán ADMIN y USER"
+@Hidden
 @Getter
 public enum RoleName {
     ROLE_ADMIN("Administrator"),

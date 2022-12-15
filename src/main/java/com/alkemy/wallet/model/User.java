@@ -1,68 +1,59 @@
 package com.alkemy.wallet.model;
 
-import java.io.Serializable;
-import java.util.Date;
+import io.swagger.v3.oas.annotations.Hidden;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.util.Date;
 
-import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Data
+@Builder
 @Table(name="users")
-public class User implements Serializable{
+public class User {
 	
 	@Id
-	@Column(name = "USER_ID", unique=true, nullable=false)
-    @GeneratedValue(strategy = GenerationType.AUTO)
-	private long userId;
+	@Column(name = "user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-	@Column(name = "FIRST_NAME", nullable=false)
-	@NotEmpty
+	@NotEmpty(message = "{firstname.notnull}")
+	@Column(name = "first_name", nullable=false)
 	private String firstName;
 
-	@Column(name = "LAST_NAME", nullable=false)
-	@NotEmpty
+	@NotEmpty(message = "{lastname.notnull}")
+	@Column(name = "last_name", nullable=false)
 	private String lastName;
 
-	@Column(name = "EMAIL", unique=true, nullable=false)
-	@Email
-	@NotEmpty
+	@Email(message = "{email.pattern}")
+	@NotEmpty(message = "{email.notnull}")
+	@Column(name = "email", unique=true, nullable=false)
 	private String email;
 
-	@Column(name = "PASSWORD", nullable=false)
-	@NotEmpty
+	@NotEmpty(message = "{password.notnull}")
+	@Column(name = "password", nullable=false)
 	private String password;
 
 	@ManyToOne
 	@JoinColumn(name = "role_id")
 	private Role role; // Clave foranea hacia ID de Role
 
-	@Column(name = "CREATION_DATE")
+	@Column(name = "creation_date")
 	@CreationTimestamp
 	private Date creationDate;
 
-	@Column(name = "UPDATE_DATE")
+	@Column(name = "update_date")
 	@UpdateTimestamp
 	private Date updateDate;
 
-	@Column(name = "SOFT_DELETE")
+	@Column(name = "soft_delete")
 	private boolean softDelete = false;
-	
-	public User() {
-	}
-	
-	@PrePersist
-	public void prePersist() {
-		this.creationDate = new Date();
-	}
-	
-	@PreUpdate
-	public void preUpdate() {
-		this.updateDate = new Date();
-	}
+
 }
